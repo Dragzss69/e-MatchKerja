@@ -30,7 +30,7 @@
             </div>
             <div>
                 @auth
-                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                    <a href="{{ url('/laporan') }}">Laporan Bantuan</a>
                     <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                         @csrf
                         <button type="submit">Logout</button>

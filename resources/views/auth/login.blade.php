@@ -36,5 +36,5 @@
     </form>
 
     <p class="small">Belum punya akun? <a href="{{ route('register') }}">Register</a></p>
-    <p class="small"><a href="{{ route('password.request') }}">Lupa password?</a></p>
+    <!-- <p class="small"><a href="{{ route('password.request') }}">Lupa password?</a></p> -->
 @endsection
