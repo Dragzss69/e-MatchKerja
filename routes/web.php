@@ -18,3 +18,19 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });
+// Person 3 Routes
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+});
+
+Route::get('/perusahaan/dashboard', function () {
+    return view('perusahaan.dashboard');
+});
+
+Route::get('/pencari-kerja/dashboard', function () {
+    return view('pencari-kerja.dashboard');
+});
+
+Route::get('/map', function () {
+    return view('map.index');
+});
