@@ -2,9 +2,15 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SpkBantuanController;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Jalur halaman rekomendasi bantuan sosial berbasis risiko ekonomi
+    Route::get('/admin/rekomendasi-bantuan', [SpkBantuanController::class, 'index'])->name('admin.spk.index');
 });
 
 Route::middleware('guest')->group(function () {
