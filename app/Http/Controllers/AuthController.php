@@ -13,6 +13,21 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->hasRole('admin')) {
+                return redirect()->route('admin.dashboard');
+            }
+            if ($user->hasRole('perusahaan')) {
+                return redirect()->route('perusahaan.dashboard');
+            }
+            if ($user->hasRole('job_seeker')) {
+                return redirect()->route('pencari-kerja.dashboard');
+            }
+            if ($user->hasRole('verifier')) {
+                return redirect()->route('pengajuan-bantuan.index');
+            }
+        }
         return view('auth.login');
     }
 
@@ -31,15 +46,31 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/');
+        $user = Auth::user();
+        
+        // Redirect berdasarkan role
+        if ($user->hasRole('admin')) {
+            return redirect()->route('admin.dashboard');
+        }
+        if ($user->hasRole('employer')) {
+            return redirect()->route('perusahaan.dashboard');
+        }
+        if ($user->hasRole('job_seeker')) {
+            return redirect()->route('pencari-kerja.dashboard');
+        }
+        if ($user->hasRole('verifier')) {
+            return redirect()->route('pengajuan-bantuan.index');
+        }
+
+        return redirect()->route('home');
     }
 
     public function showRegistrationForm()
     {
         return view('auth.register', [
             'roles' => [
-                Role::JOB_SEEKER => 'Pencari Kerja / Masyarakat',
-                Role::EMPLOYER => 'Perusahaan / Employer',
+                'job_seeker' => 'Pencari Kerja / Masyarakat',
+                'perusahaan' => 'Perusahaan / Employer',
             ],
         ]);
     }
@@ -50,7 +81,7 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', Rule::in([Role::JOB_SEEKER, Role::EMPLOYER])],
+            'role' => ['required', Rule::in(['job_seeker', 'perusahaan'])],
         ]);
 
         $user = User::create([
@@ -63,7 +94,10 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');
+        if ($data['role'] == 'perusahaan') {
+            return redirect()->route('perusahaan.dashboard');
+        }
+        return redirect()->route('pencari-kerja.dashboard');
     }
 
     public function logout(Request $request)
@@ -71,7 +105,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return redirect('/');
+        
+        return redirect()->route('login');
     }
 }
