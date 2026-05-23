@@ -1,0 +1,48 @@
+Viewed DatabaseSeeder.php:25-43
+
+Berikut adalah ulasan lengkap mengenai seluruh perubahan yang telah dilakukan pada proyek **e-MatchKerja** beserta alasan dan urgensinya:
+
+---
+
+### 1. Penghapusan Migrasi & Berkas Tidak Terpakai (Pembersihan Kode)
+
+*   **Menghapus Migrasi `2026_05_22_090039_create_profiles_pencari_kerja_table.php`**
+    *   **Alasan**: Berkas migrasi ini membuat tabel bernama `profiles_pencari_kerja`. Tabel ini merupakan **duplikat** dari tabel `job_seeker_profiles` (yang dibuat oleh migrasi `0001_01_01_000002_create_job_seeker_profiles_table.php`). 
+    *   **Urgensi**: Model Eloquent di backend (`JobSeekerProfile.php`) dan seluruh kontroler merujuk pada tabel `job_seeker_profiles`. Keberadaan tabel duplikat ini tidak hanya membuang ruang penyimpanan database, tetapi juga memicu kerancuan skema data dan potensi kegagalan relasi foreign key saat melakukan migrasi.
+*   **Mengosongkan Berkas `resources/views/jobseeker/index.blade.php`**
+    *   **Alasan**: File ini sama sekali tidak pernah dipanggil oleh kontroler mana pun di sistem. Halaman daftar pencari kerja untuk kebutuhan pengelolaan admin sudah ditangani secara terpisah oleh berkas `resources/views/admin/jobseekers/index.blade.php`.
+*   **Memindahkan Berkas Edit Lowongan**
+    *   **Alasan**: Berkas `edit.blade.php` untuk lowongan kerja awalnya terletak di `resources/views/admin/lowongan/edit.blade.php`. Namun, di dalam `LowonganKerjaController.php`, sistem mencari berkas tersebut di path `perusahaan.lowongan.edit`. Kami telah memindahkannya ke [edit.blade.php](file:///e:/Programming/Tools/laragon/www/e-MatchKerja/resources/views/perusahaan/lowongan/edit.blade.php) agar kontroler dapat memuat halaman edit lowongan dengan sukses tanpa memicu error *View not found*.
+
+---
+
+### 2. Penambahan Kolom Database & Sinkronisasi Seeder
+
+*   **Menambahkan Kolom `status_verifikasi` pada Tabel `job_seeker_profiles`**
+    *   **Alasan**: Di dalam `SawService.php` (logika algoritma SAW), terdapat query untuk memfilter kandidat kelayakan: `JobSeekerProfile::where('status_verifikasi', 'Verified')->get();`. Namun, pada migrasi tabel `job_seeker_profiles` sebelumnya, kolom `status_verifikasi` ini **belum dibuat**.
+    *   **Urgensi**: Jika kolom ini tidak ada di database, sistem otomatis akan langsung crash dan menampilkan error SQL *"Column not found: Unknown column status_verifikasi"* setiap kali Admin atau Verifikator mengakses dasbor / halaman rekomendasi SPK.
+*   **Menghubungkan `KriteriaSeeder` & `JobSeekerProfileSeeder` di [DatabaseSeeder.php](file:///e:/Programming/Tools/laragon/www/e-MatchKerja/database/seeders/DatabaseSeeder.php)**
+    *   **Alasan**: Sebelumnya, kedua seeder krusial ini tidak dipanggil di dalam `DatabaseSeeder`, sehingga database tabel kriteria SPK dan profil data dummy kosong. Akibatnya, algoritma SAW tidak dapat menghitung skor akhir kandidat (skor preferensi V selalu kosong).
+*   **Memperbaiki Nilai Enum `status_kerja_saat_ini` pada Seeder**
+    *   **Alasan**: Di berkas migrasi, kolom status kerja dibatasi menggunakan tipe data ENUM: `['Menganggur', 'Bekerja', 'Freelance', 'Wirausaha']`. Namun, seeder lama mencoba memasukkan data acak berupa `"PHK"` dan `"Bekerja Serabutan"`.
+    *   **Urgensi**: Ini memicu error MySQL *Data truncated for column status_kerja_saat_ini* yang menyebabkan proses seeding gagal di tengah jalan. Kami memperbaikinya agar data seeder menggunakan opsi yang terdaftar resmi pada ENUM tersebut.
+
+---
+
+### 3. Perbaikan Bug & Mismatch Routing
+
+*   **Memperbaiki Route Penyaluran Bantuan**
+    *   **Alasan**: Di `routes/web.php` sebelumnya tertulis `Route::post('/{pengajuan}/disalurkan', ...)->name('disalurkan')` yang mengarah ke method `disalurkan` di kontroler. Padahal di kontroler, nama method yang tersedia adalah `salurkan`. Hal ini diubah ke `salurkan` agar tidak memicu error *ActionNotFoundException*.
+*   **Menambahkan Route yang Hilang**
+    *   **Alasan**: View di halaman admin memanggil route detail profil (`jobseeker-profiles.show`) dan form edit pengajuan (`pengajuan-bantuan.edit`), tetapi kedua route tersebut belum didefinisikan di `routes/web.php`, sehingga memicu error *Route [jobseeker-profiles.show] not defined*. Kami telah mendefinisikan seluruh route tersebut secara lengkap.
+
+---
+
+### 4. Peningkatan Antarmuka Visual (Beautification) Premium
+
+*   **Penyatuan Framework CSS (Tailwind CSS v4 & Vite)**:
+    *   Sebelumnya, beberapa halaman menggunakan kelas-kelas Bootstrap padahal Bootstrap tidak diimpor di layout, sementara halaman welcome menggunakan Tailwind CDN secara mentah. Kami telah menyatukan seluruh visual aplikasi menggunakan compiler Tailwind CSS v4 bawaan proyek melalui Vite.
+*   **Pembuatan 4 Dasbor Interaktif yang Berbeda**:
+    *   Tampilan dasbor di [dashboard.blade.php](file:///e:/Programming/Tools/laragon/www/e-MatchKerja/resources/views/dashboard.blade.php) sekarang dinonaktifkan dari bentuk monoton yang sama. Dasbor akan menyesuaikan perannya dengan visual warna khusus (Slate Blue untuk Admin, Emerald/Teal untuk Verifikator, Indigo untuk Perusahaan, dan Amber untuk Pencari Kerja) lengkap dengan widget statistik relevan dan progress bar tahapan bansos.
+*   **Pembersihan Konflik Git**:
+    *   Menghilangkan tag konflik git (`<<<<<<< HEAD` dan `>>>>>>>`) di berkas login yang sebelumnya merusak rendering HTML halaman login.
