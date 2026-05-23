@@ -3,24 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\PengajuanBantuan;
+use App\Notifications\StatusPengajuanBerubah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PengajuanBantuanController extends Controller
 {
-    private function userHasRole(string $role): bool
-    {
-        return Auth::user()->roles->pluck('name')->contains($role);
-    }
-
     public function index()
     {
-        if ($this->userHasRole('job_seeker')) {
+        if (Auth::user()->isJobSeeker()) {
             $pengajuans = PengajuanBantuan::where('pencari_kerja_id', Auth::id())
                             ->with('pencariKerja')
                             ->latest()
                             ->paginate(10);
-        } elseif ($this->userHasRole('admin')) {
+        } elseif (Auth::user()->isAdmin()) {
             $pengajuans = PengajuanBantuan::with('pencariKerja')
                             ->where('status', '!=', 'pending')
                             ->latest()
@@ -36,7 +32,7 @@ class PengajuanBantuanController extends Controller
 
     public function create()
     {
-        if (!$this->userHasRole('job_seeker')) {
+        if (!Auth::user()->isJobSeeker()) {
             abort(403, 'Hanya Pencari Kerja yang boleh mengajukan bantuan.');
         }
 
@@ -45,7 +41,7 @@ class PengajuanBantuanController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->userHasRole('job_seeker')) {
+        if (!Auth::user()->isJobSeeker()) {
             abort(403);
         }
 
@@ -74,23 +70,28 @@ class PengajuanBantuanController extends Controller
 
     public function verifikasi(Request $request, PengajuanBantuan $pengajuan)
     {
-        if (!$this->userHasRole('verifier')) {
+        if (!Auth::user()->isVerifier()) {
             abort(403, 'Hanya Petugas yang bisa melakukan verifikasi.');
         }
 
         $pengajuan->update([
-            'status'              => 'diverifikasi',
-            'verified_by'         => Auth::id(),
-            'catatan_verifikasi'  => $request->catatan_verifikasi,
-            'tanggal_verifikasi'  => now(),
+            'status'             => 'diverifikasi',
+            'verified_by'        => Auth::id(),
+            'catatan_verifikasi' => $request->catatan_verifikasi,
+            'tanggal_verifikasi' => now(),
         ]);
+
+        $pengajuan->pencariKerja->notify(new StatusPengajuanBerubah(
+            $pengajuan,
+            'Pengajuan bantuan kamu sedang dalam proses verifikasi oleh petugas.'
+        ));
 
         return back()->with('success', 'Pengajuan berhasil diverifikasi.');
     }
 
     public function approve(Request $request, PengajuanBantuan $pengajuan)
     {
-        if (!$this->userHasRole('admin')) {
+        if (!Auth::user()->isAdmin()) {
             abort(403, 'Hanya Admin yang bisa menyetujui pengajuan.');
         }
 
@@ -101,12 +102,17 @@ class PengajuanBantuanController extends Controller
             'tanggal_approval' => now(),
         ]);
 
+        $pengajuan->pencariKerja->notify(new StatusPengajuanBerubah(
+            $pengajuan,
+            'Selamat! Pengajuan bantuan kamu telah disetujui oleh Admin.'
+        ));
+
         return back()->with('success', 'Pengajuan berhasil disetujui.');
     }
 
     public function tolak(Request $request, PengajuanBantuan $pengajuan)
     {
-        if (!$this->userHasRole('verifier') && !$this->userHasRole('admin')) {
+        if (!Auth::user()->isVerifier() && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -117,6 +123,34 @@ class PengajuanBantuanController extends Controller
             'tanggal_approval' => now(),
         ]);
 
+        $pengajuan->pencariKerja->notify(new StatusPengajuanBerubah(
+            $pengajuan,
+            'Maaf, pengajuan bantuan kamu telah ditolak.'
+        ));
+
         return back()->with('success', 'Pengajuan ditolak.');
+    }
+
+    public function salurkan(Request $request, PengajuanBantuan $pengajuan)
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'rekening_penerima' => 'required|string',
+        ]);
+
+        $pengajuan->update([
+            'status'             => 'disalurkan',
+            'tanggal_penyaluran' => now(),
+        ]);
+
+        $pengajuan->pencariKerja->notify(new StatusPengajuanBerubah(
+            $pengajuan,
+            'Dana bantuan kamu telah disalurkan. Silakan cek rekening kamu.'
+        ));
+
+        return back()->with('success', 'Dana telah ditandai sebagai disalurkan.');
     }
 }
