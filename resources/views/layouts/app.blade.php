@@ -1,185 +1,341 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'e-MatchKerja') }}</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background: #f7fafc; 
-            color: #1a202c; 
-        }
-        .container { 
-            max-width: 1200px; 
-            margin: 30px auto; 
-            padding: 20px; 
-        }
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: #2b6cb0; 
-            color: white; 
-            padding: 15px 25px; 
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .header h1 { margin: 0; font-size: 1.5rem; }
-        .nav a { 
-            color: white; 
-            margin-left: 20px; 
-            text-decoration: none; 
-            font-weight: 500;
-        }
-        .nav a:hover { text-decoration: underline; }
-        .alert { 
-            padding: 12px 16px; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-        }
-        .alert-success { background: #c6f6d5; color: #22543d; }
-        .small { font-size: 0.95rem; color: #4a5568; }
-        .field-error { color: #c53030; font-size: 0.9rem; margin-top: 4px; }
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'e-MatchKerja') - Platform SPK Penyaluran Bantuan & Karir</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-        /* Notifikasi */
-        .notif-wrapper { position: relative; display: inline-block; margin-left: 16px; vertical-align: middle; }
-        .notif-btn { background: none; border: none; cursor: pointer; padding: 6px; position: relative; color: #4a5568; }
-        .notif-btn:hover { color: #1a202c; background: none; }
-        .notif-badge { position: absolute; top: 0; right: 0; background: #e53e3e; color: #fff;
-                       font-size: 0.65rem; font-weight: 700; border-radius: 9999px;
-                       padding: 1px 5px; line-height: 1.4; }
-        .notif-dropdown { position: absolute; right: 0; top: calc(100% + 8px); width: 320px;
-                          background: #fff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-                          border: 1px solid #e2e8f0; z-index: 999; overflow: hidden; }
-        .notif-header { display: flex; justify-content: space-between; align-items: center;
-                        padding: 12px 16px; border-bottom: 1px solid #e2e8f0; background: #f7fafc; }
-        .notif-header span { font-weight: 600; font-size: 0.95rem; color: #2d3748; }
-        .notif-header-actions { display: flex; gap: 12px; }
-        .notif-header-actions a,
-        .notif-header-actions button { font-size: 0.78rem; color: #2b6cb0; background: none;
-                                       border: none; cursor: pointer; padding: 0; text-decoration: none; }
-        .notif-header-actions a:hover,
-        .notif-header-actions button:hover { text-decoration: underline; }
-        .notif-list { max-height: 320px; overflow-y: auto; }
-        .notif-item { display: block; padding: 12px 16px; border-bottom: 1px solid #f0f0f0;
-                      text-decoration: none; color: inherit; transition: background 0.15s; }
-        .notif-item:hover { background: #f7fafc; }
-        .notif-item.unread { background: #ebf8ff; }
-        .notif-item .notif-pesan { font-size: 0.875rem; color: #2d3748; margin-bottom: 4px; }
-        .notif-item .notif-meta { display: flex; justify-content: space-between; align-items: center; }
-        .notif-item .notif-time { font-size: 0.75rem; color: #a0aec0; }
-        .notif-status { font-size: 0.7rem; padding: 2px 8px; border-radius: 9999px; font-weight: 600; }
-        .notif-status.pending    { background: #fefcbf; color: #744210; }
-        .notif-status.diverifikasi { background: #bee3f8; color: #2c5282; }
-        .notif-status.disetujui  { background: #c6f6d5; color: #22543d; }
-        .notif-status.ditolak    { background: #fed7d7; color: #9b2c2c; }
-        .notif-status.disalurkan { background: #e9d8fd; color: #553c9a; }
-        .notif-empty { padding: 32px 16px; text-align: center; color: #a0aec0; font-size: 0.875rem; }
-        .notif-dot { width: 8px; height: 8px; background: #3182ce; border-radius: 9999px; display: inline-block; }
-        .alert-danger { background: #fed7d7; color: #9b2c2c; }
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AlpineJS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Tailwind CSS & JS via Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+        }
+        [x-cloak] { display: none !important; }
     </style>
+    @yield('styles')
 </head>
-<body>
-    <div class="container">
+<body class="h-full flex flex-col text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Main Wrapper -->
+    <div class="min-h-full flex flex-col">
         
         <!-- HEADER / NAVBAR -->
-        <div class="header">
-            <div>
-                <h1>{{ config('app.name', 'e-MatchKerja') }}</h1>
-                <p class="small">Sistem autentikasi dan manajemen akun</p>
-            </div>
-            <div style="display:flex; align-items:center;">
-                @auth
-                    <a href="{{ route('dashboard') }}">Dashboard</a>
-                    <a href="{{ url('/laporan') }}">Laporan Bantuan</a>
+        <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/80 transition-all duration-200" x-data="{ mobileMenuOpen: false }">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 justify-between items-center">
+                    
+                    <!-- Logo / Brand -->
+                    <div class="flex items-center gap-3">
+                        <a href="/" class="flex items-center gap-2.5 group">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-md shadow-indigo-200 transition-all duration-300 group-hover:scale-105">
+                                <i class="fa-solid fa-briefcase text-white text-lg"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-lg font-bold tracking-tight text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors">e-MatchKerja</span>
+                                <span class="text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-none">SPK & Karir</span>
+                            </div>
+                        </a>
+                    </div>
 
-                    {{-- Bell Notifikasi --}}
-                    <div class="notif-wrapper" x-data="{ open: false }">
-                        <button class="notif-btn" @click="open = !open" type="button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                            </svg>
-                            @if(auth()->user()->unreadNotifications->count() > 0)
-                            <span class="notif-badge">
-                                {{ auth()->user()->unreadNotifications->count() }}
-                            </span>
-                            @endif
-                        </button>
+                    <!-- Desktop Nav Menu (Centered) -->
+                    @auth
+                    <div class="hidden md:flex md:items-center md:space-x-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200/50">
+                        <a href="{{ route('dashboard') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                            Dashboard
+                        </a>
+                        
+                        @if(auth()->user()->isAdmin())
+                            <a href="{{ route('admin.spk.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.spk.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                SPK Kelayakan Bantuan
+                            </a>
+                            <a href="{{ route('admin.jobseekers.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.jobseekers.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Data Pencari Kerja
+                            </a>
+                            <a href="{{ route('admin.lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.lowongan.*') || request()->routeIs('lowongan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Kelola Lowongan
+                            </a>
+                        @endif
 
-                        <div class="notif-dropdown" x-show="open" @click.away="open = false" x-transition>
-                            <div class="notif-header">
-                                <span>Notifikasi</span>
-                                <div class="notif-header-actions">
+                        @if(auth()->user()->isVerifier())
+                            <a href="{{ route('admin.spk.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.spk.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Rekomendasi Kelayakan
+                            </a>
+                            <a href="{{ route('pengajuan-bantuan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('pengajuan-bantuan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Verifikasi Pengajuan
+                            </a>
+                        @endif
+
+                        @if(auth()->user()->isEmployer())
+                            <a href="{{ route('lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('lowongan.index') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Daftar Lowongan Saya
+                            </a>
+                            <a href="{{ route('perusahaan.lowongan.create') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('perusahaan.lowongan.create') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Post Lowongan Baru
+                            </a>
+                        @endif
+
+                        @if(auth()->user()->isJobSeeker())
+                            <a href="{{ route('jobseeker.profile.create') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('jobseeker.profile.create') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Profil Saya
+                            </a>
+                            <a href="{{ route('pengajuan-bantuan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('pengajuan-bantuan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Pengajuan Bantuan
+                            </a>
+                            <a href="{{ route('lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('lowongan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Cari Pekerjaan
+                            </a>
+                        @endif
+
+                        <a href="{{ route('laporan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('laporan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                            Laporan Bantuan
+                        </a>
+                    </div>
+                    @endauth
+
+                    <!-- User Actions Area -->
+                    <div class="flex items-center gap-4">
+                        @auth
+                            
+                            <!-- Bell Notification Icon -->
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" type="button" class="relative rounded-xl p-2.5 text-slate-500 bg-slate-50 border border-slate-200/80 hover:bg-slate-100 hover:text-slate-800 transition duration-150 focus:outline-none">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                    </svg>
                                     @if(auth()->user()->unreadNotifications->count() > 0)
-                                    <form action="{{ route('notifications.markAllRead') }}" method="POST">
-                                        @csrf
-                                        <button type="submit">Tandai dibaca</button>
-                                    </form>
+                                        <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                                        </span>
                                     @endif
-                                    <a href="{{ route('notifications.index') }}">Lihat semua</a>
+                                </button>
+
+                                <!-- Notification Dropdown -->
+                                <div x-show="open" @click.away="open = false" x-cloak
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                     x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                     class="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl bg-white p-2 shadow-xl border border-slate-200/80 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    
+                                    <div class="px-4 py-2.5 flex items-center justify-between border-b border-slate-100">
+                                        <span class="text-sm font-bold text-slate-900">Notifikasi Terbaru</span>
+                                        @if(auth()->user()->unreadNotifications->count() > 0)
+                                            <form action="{{ route('notifications.markAllRead') }}" method="POST" class="m-0">
+                                                @csrf
+                                                <button type="submit" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition">
+                                                    Tandai Dibaca
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+
+                                    <div class="max-h-64 overflow-y-auto divide-y divide-slate-100">
+                                        @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notif)
+                                            <a href="{{ route('notifications.markRead', $notif->id) }}" class="flex flex-col gap-1 p-3 transition hover:bg-slate-50 {{ is_null($notif->read_at) ? 'bg-indigo-50/40' : '' }}">
+                                                <p class="text-xs text-slate-800 leading-snug">{{ $notif->data['pesan'] }}</p>
+                                                <div class="flex items-center justify-between mt-1 text-[10px] text-slate-400">
+                                                    <span>{{ $notif->created_at->diffForHumans() }}</span>
+                                                    <span class="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider
+                                                        @if(($notif->data['status'] ?? '') == 'pending') bg-amber-100 text-amber-800
+                                                        @elseif(($notif->data['status'] ?? '') == 'diverifikasi') bg-sky-100 text-sky-800
+                                                        @elseif(($notif->data['status'] ?? '') == 'disetujui') bg-emerald-100 text-emerald-800
+                                                        @elseif(($notif->data['status'] ?? '') == 'ditolak') bg-rose-100 text-rose-800
+                                                        @else bg-purple-100 text-purple-800 @endif">
+                                                        {{ $notif->data['status'] ?? 'Info' }}
+                                                    </span>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <div class="py-8 text-center text-xs text-slate-400">
+                                                <i class="fa-regular fa-bell text-lg mb-2 block"></i>
+                                                Belum ada notifikasi
+                                            </div>
+                                        @endforelse
+                                    </div>
+                                    <div class="p-2 border-t border-slate-100 text-center">
+                                        <a href="{{ route('notifications.index') }}" class="block w-full py-1.5 text-center text-xs font-semibold text-slate-600 hover:text-indigo-600 transition bg-slate-50 hover:bg-indigo-50/50 rounded-lg">
+                                            Lihat Semua Notifikasi
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="notif-list">
-                                @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notif)
-                                <a href="{{ route('notifications.markRead', $notif->id) }}"
-                                   class="notif-item {{ is_null($notif->read_at) ? 'unread' : '' }}">
-                                    <p class="notif-pesan">{{ $notif->data['pesan'] }}</p>
-                                    <div class="notif-meta">
-                                        <span class="notif-status {{ $notif->data['status'] }}">
-                                            {{ ucfirst($notif->data['status']) }}
-                                        </span>
-                                        <div style="display:flex; align-items:center; gap:6px;">
-                                            <span class="notif-time">{{ $notif->created_at->diffForHumans() }}</span>
-                                            @if(is_null($notif->read_at))
-                                            <span class="notif-dot"></span>
-                                            @endif
-                                        </div>
+                            <!-- Profile Dropdown -->
+                            <div class="relative" x-data="{ profileOpen: false }">
+                                <button @click="profileOpen = !profileOpen" type="button" class="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white pl-2 pr-3 py-1.5 hover:bg-slate-50 transition focus:outline-none">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500 text-white font-bold text-sm">
+                                        {{ substr(auth()->user()->name, 0, 1) }}
                                     </div>
-                                </a>
-                                @empty
-                                <div class="notif-empty">Belum ada notifikasi</div>
-                                @endforelse
+                                    <div class="hidden sm:flex flex-col text-left leading-none">
+                                        <span class="text-xs font-bold text-slate-800">{{ auth()->user()->name }}</span>
+                                        <span class="text-[9px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">
+                                            @if(auth()->user()->isAdmin()) Admin
+                                            @elseif(auth()->user()->isVerifier()) Verifikator
+                                            @elseif(auth()->user()->isEmployer()) Perusahaan
+                                            @elseif(auth()->user()->isJobSeeker()) Pencari Kerja
+                                            @else Pengguna
+                                            @endif
+                                        </span>
+                                    </div>
+                                    <i class="fa-solid fa-angle-down text-slate-400 text-[10px] ml-1"></i>
+                                </button>
+
+                                <div x-show="profileOpen" @click.away="profileOpen = false" x-cloak
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute right-0 mt-2.5 w-48 origin-top-right rounded-2xl bg-white p-1.5 shadow-xl border border-slate-200 ring-1 ring-black/5">
+                                    <div class="px-3.5 py-2.5 border-b border-slate-100">
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Email Anda</p>
+                                        <p class="text-xs font-semibold text-slate-800 truncate mt-1 leading-none">{{ auth()->user()->email }}</p>
+                                    </div>
+                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-xl transition">
+                                        <i class="fa-solid fa-chart-line text-sm text-slate-400"></i>
+                                        Dashboard
+                                    </a>
+                                    <form method="POST" action="{{ route('logout') }}" class="m-0 border-t border-slate-100 mt-1 pt-1">
+                                        @csrf
+                                        <button type="submit" class="flex w-full items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition text-left">
+                                            <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+
+                        @else
+                            <a href="{{ route('login') }}" class="text-xs font-bold text-slate-700 hover:text-indigo-600 px-3 py-2 transition">
+                                Login
+                            </a>
+                            <a href="{{ route('register') }}" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm shadow-indigo-100 hover:bg-indigo-700 transition">
+                                Register
+                            </a>
+                        @endauth
+                        
+                        <!-- Mobile Menu Button -->
+                        <button type="button" @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden rounded-xl p-2.5 text-slate-500 bg-slate-50 border border-slate-200/80 hover:bg-slate-100 focus:outline-none">
+                            <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+                        </button>
                     </div>
 
-                    <div class="nav">
-                        <a href="{{ route('admin.jobseekers.index') }}">Pencari Kerja</a>
-                        <a href="{{ route('admin.lowongan.index') }}">Lowongan</a>
-                        <a href="{{ route('jobseeker.profile.create') }}">Profil Saya</a>
-                        <a href="{{ route('perusahaan.lowongan.create') }}">Posting Lowongan</a>
-                        <form action="{{ route('logout') }}" method="POST" style="display:inline; margin-left:16px;">
-                            @csrf
-                            <button type="submit" style="background:none; border:none; color:white; cursor:pointer;">
-                                Logout
-                            </button>
-                        </form>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}">Login</a>
-                    <a href="{{ route('register') }}">Register</a>
-                @endauth
+                </div>
             </div>
-        </div>
 
-        <!-- Pesan Success / Error -->
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+            <!-- Mobile Nav Menu -->
+            <div x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false" x-transition class="md:hidden border-b border-slate-200 bg-white">
+                <div class="space-y-1.5 px-4 pb-4 pt-2">
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                            Dashboard
+                        </a>
+                        @if(auth()->user()->isAdmin())
+                            <a href="{{ route('admin.spk.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                SPK Kelayakan Bantuan
+                            </a>
+                            <a href="{{ route('admin.jobseekers.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Data Pencari Kerja
+                            </a>
+                            <a href="{{ route('admin.lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Kelola Lowongan
+                            </a>
+                        @endif
+                        @if(auth()->user()->isVerifier())
+                            <a href="{{ route('admin.spk.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Rekomendasi Kelayakan
+                            </a>
+                            <a href="{{ route('pengajuan-bantuan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Verifikasi Pengajuan
+                            </a>
+                        @endif
+                        @if(auth()->user()->isEmployer())
+                            <a href="{{ route('lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Daftar Lowongan Saya
+                            </a>
+                            <a href="{{ route('perusahaan.lowongan.create') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Post Lowongan Baru
+                            </a>
+                        @endif
+                        @if(auth()->user()->isJobSeeker())
+                            <a href="{{ route('jobseeker.profile.create') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Profil Saya
+                            </a>
+                            <a href="{{ route('pengajuan-bantuan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Pengajuan Bantuan
+                            </a>
+                            <a href="{{ route('lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                                Cari Pekerjaan
+                            </a>
+                        @endif
+                        <a href="{{ route('laporan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
+                            Laporan Bantuan
+                        </a>
+                    @endauth
+                </div>
+            </div>
+        </nav>
 
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 py-8">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                
+                <!-- Alerts / Sessions -->
+                @if (session('success'))
+                    <div class="mb-6 rounded-2xl bg-emerald-50 p-4 border border-emerald-200/80 text-emerald-800 flex gap-3 items-center shadow-sm">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                        <div class="text-xs font-bold leading-tight">{{ session('success') }}</div>
+                    </div>
+                @endif
 
-        @yield('content')
+                @if (session('error'))
+                    <div class="mb-6 rounded-2xl bg-rose-50 p-4 border border-rose-200/80 text-rose-800 flex gap-3 items-center shadow-sm">
+                        <i class="fa-solid fa-circle-exclamation text-rose-500 text-lg"></i>
+                        <div class="text-xs font-bold leading-tight">{{ session('error') }}</div>
+                    </div>
+                @endif
+
+                @if (session('info'))
+                    <div class="mb-6 rounded-2xl bg-indigo-50 p-4 border border-indigo-100 text-indigo-800 flex gap-3 items-center shadow-sm">
+                        <i class="fa-solid fa-circle-info text-indigo-500 text-lg"></i>
+                        <div class="text-xs font-bold leading-tight">{{ session('info') }}</div>
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="mt-auto bg-white border-t border-slate-200/80 py-6 text-center text-slate-400 text-xs font-medium">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p>&copy; {{ date('Y') }} e-MatchKerja. Hak Cipta Dilindungi.</p>
+                <div class="flex items-center gap-4">
+                    <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">BANTUAN SOSIAL SPK SAW</span>
+                </div>
+            </div>
+        </footer>
 
     </div>
+
+    @yield('scripts')
 </body>
 </html>

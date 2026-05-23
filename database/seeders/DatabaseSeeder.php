@@ -21,7 +21,10 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        $this->call(RoleSeeder::class);
+        $this->call([
+            RoleSeeder::class,
+            KriteriaSeeder::class,
+        ]);
 
         // Admin
         $admin = User::firstOrCreate(
@@ -44,8 +47,31 @@ class DatabaseSeeder extends Seeder
                 ['name' => "Pencari Kerja {$i}", 'password' => bcrypt('password')]
             );
             $this->assignRole($user, 'job_seeker'); // ← diperbaiki dari 'pencari_kerja'
+
+            // Berikan profile default agar bisa masuk ke data admin/petugas
+            \App\Models\JobSeekerProfile::firstOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'nik' => '720' . $i . rand(100000, 999999) . '1234',
+                    'nama_lengkap' => $user->name,
+                    'tanggal_lahir' => '1995-05-1' . $i,
+                    'jenis_kelamin' => $i % 2 === 0 ? 'P' : 'L',
+                    'alamat_ktp' => 'Jl. Merdeka No. ' . $i . ', Palu',
+                    'no_hp' => '08123456789' . $i,
+                    'pendidikan_terakhir' => 'S1',
+                    'status_kerja_saat_ini' => 'Menganggur',
+                    'lama_menganggur' => 6 + $i,
+                    'pendapatan_bulanan' => 0,
+                    'jumlah_tanggungan' => 2,
+                    'status_verifikasi' => $i % 2 === 0 ? 'Verified' : 'Unverified',
+                ]
+            );
         }
 
+        // Jalankan Profile Seeder Tambahan (Andi, Siti, Budi, Dewi)
+        $this->call(JobSeekerProfileSeeder::class);
+
+        // Jalankan Seeder Pengajuan Bantuan
         $this->call(PengajuanBantuanSeeder::class);
 
         $this->command->info('✅ Database seeding selesai!');

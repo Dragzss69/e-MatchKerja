@@ -3,98 +3,133 @@
 @section('title', 'Daftar Pencari Kerja')
 
 @section('content')
-<div class="container mt-4">
-    <h2>Daftar Pencari Kerja</h2>
-
-    <!-- Search & Filter -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form method="GET" action="{{ route('admin.jobseekers.index') }}">
-                <div class="row g-3 align-items-end">
-                    <!-- Search -->
-                    <div class="col-md-4">
-                        <label class="form-label">Cari</label>
-                        <input type="text" name="search" class="form-control" 
-                               placeholder="NIK, Nama, atau No HP" 
-                               value="{{ request('search') }}">
-                    </div>
-
-                    <!-- Filter Status Kerja -->
-                    <div class="col-md-3">
-                        <label class="form-label">Status Kerja</label>
-                        <select name="status_kerja" class="form-select">
-                            <option value="">Semua Status</option>
-                            <option value="menganggur" {{ request('status_kerja') == 'menganggur' ? 'selected' : '' }}>Menganggur</option>
-                            <option value="bekerja" {{ request('status_kerja') == 'bekerja' ? 'selected' : '' }}>Bekerja</option>
-                            <option value="freelance" {{ request('status_kerja') == 'freelance' ? 'selected' : '' }}>Freelance</option>
-                            <option value="wirausaha" {{ request('status_kerja') == 'wirausaha' ? 'selected' : '' }}>Wirausaha</option>
-                        </select>
-                    </div>
-
-                    <!-- Filter Pendidikan -->
-                    <div class="col-md-3">
-                        <label class="form-label">Pendidikan</label>
-                        <select name="pendidikan" class="form-select">
-                            <option value="">Semua Pendidikan</option>
-                            <option value="SMA/SMK" {{ request('pendidikan') == 'SMA/SMK' ? 'selected' : '' }}>SMA/SMK</option>
-                            <option value="D3" {{ request('pendidikan') == 'D3' ? 'selected' : '' }}>D3</option>
-                            <option value="S1" {{ request('pendidikan') == 'S1' ? 'selected' : '' }}>S1</option>
-                            <option value="S2" {{ request('pendidikan') == 'S2' ? 'selected' : '' }}>S2</option>
-                        </select>
-                    </div>
-
-                    <!-- Button -->
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">Terapkan Filter</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+<div class="space-y-6">
+    
+    <!-- Header -->
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">Daftar Pencari Kerja</h1>
+        <p class="text-xs text-slate-400 font-medium">Tinjau profil dan kualifikasi pencari kerja terdaftar di platform</p>
     </div>
 
-    <!-- Tabel Data -->
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>No</th>
-                        <th>NIK</th>
-                        <th>Nama Lengkap</th>
-                        <th>Usia</th>
-                        <th>Pendidikan</th>
-                        <th>Status Kerja</th>
-                        <th>Lama Menganggur</th>
-                        <th>Aksi</th>
+    <!-- Search & Filter Card -->
+    <div class="rounded-3xl bg-white border border-slate-200/80 shadow-sm p-6">
+        <form method="GET" action="{{ route('admin.jobseekers.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+            <!-- Search -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cari Kata Kunci</label>
+                <input type="text" name="search" class="rounded-xl border border-slate-200 px-4 py-2.5 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" 
+                       placeholder="NIK, Nama, atau No HP" 
+                       value="{{ request('search') }}">
+            </div>
+
+            <!-- Filter Status Kerja -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Pekerjaan</label>
+                <select name="status_kerja" class="rounded-xl border border-slate-200 px-4 py-2.5 text-xs bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    <option value="">Semua Status</option>
+                    <option value="menganggur" {{ request('status_kerja') == 'menganggur' ? 'selected' : '' }}>Menganggur</option>
+                    <option value="bekerja" {{ request('status_kerja') == 'bekerja' ? 'selected' : '' }}>Bekerja</option>
+                    <option value="freelance" {{ request('status_kerja') == 'freelance' ? 'selected' : '' }}>Freelance</option>
+                    <option value="wirausaha" {{ request('status_kerja') == 'wirausaha' ? 'selected' : '' }}>Wirausaha</option>
+                </select>
+            </div>
+
+            <!-- Filter Pendidikan -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pendidikan Terakhir</label>
+                <select name="pendidikan" class="rounded-xl border border-slate-200 px-4 py-2.5 text-xs bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    <option value="">Semua Pendidikan</option>
+                    <option value="SMA/SMK" {{ request('pendidikan') == 'SMA/SMK' ? 'selected' : '' }}>SMA/SMK</option>
+                    <option value="D3" {{ request('pendidikan') == 'D3' ? 'selected' : '' }}>D3</option>
+                    <option value="S1" {{ request('pendidikan') == 'S1' ? 'selected' : '' }}>S1</option>
+                    <option value="S2" {{ request('pendidikan') == 'S2' ? 'selected' : '' }}>S2</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold text-white py-3 shadow-sm transition">
+                <i class="fa-solid fa-filter mr-1.5 text-[10px]"></i> Terapkan Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- Data Table Card -->
+    <div class="rounded-3xl bg-white border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200/60">
+                        <th class="py-3.5 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">No</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">NIK</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Lengkap</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Usia</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Pendidikan</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status Kerja</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Lama Menganggur</th>
+                        <th class="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status Verifikasi</th>
+                        <th class="py-3.5 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-slate-100">
                     @forelse($profiles as $profile)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $profile->nik }}</td>
-                        <td><strong>{{ $profile->nama_lengkap }}</strong></td>
-                        <td>{{ $profile->tanggal_lahir ? \Carbon\Carbon::parse($profile->tanggal_lahir)->age : '-' }} Tahun</td>
-                        <td>{{ $profile->pendidikan_terakhir }}</td>
-                        <td>{{ ucfirst($profile->status_kerja_saat_ini ?? '-') }}</td>
-                        <td>{{ $profile->lama_menganggur }} Bulan</td>
-                        <td>
-                            <a href="{{ route('jobseeker-profiles.show', $profile->id) }}" class="btn btn-info btn-sm">Detail</a>
-                            <a href="{{ route('jobseeker-profiles.edit', $profile->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                        </td>
-                    </tr>
+                        <tr class="hover:bg-slate-50/50 transition-colors duration-150 text-xs">
+                            <td class="py-4 px-6 text-center text-slate-400 font-medium">
+                                {{ $loop->iteration + ($profiles->currentPage() - 1) * $profiles->perPage() }}
+                            </td>
+                            <td class="py-4 px-4 font-mono font-medium text-slate-500">
+                                {{ $profile->nik }}
+                            </td>
+                            <td class="py-4 px-4 font-bold text-slate-900 text-sm">
+                                {{ $profile->nama_lengkap }}
+                            </td>
+                            <td class="py-4 px-4 text-center font-semibold text-slate-700">
+                                {{ $profile->tanggal_lahir ? \Carbon\Carbon::parse($profile->tanggal_lahir)->age : '-' }} Tahun
+                            </td>
+                            <td class="py-4 px-4 text-center text-slate-600 font-medium">
+                                {{ $profile->pendidikan_terakhir }}
+                            </td>
+                            <td class="py-4 px-4 text-center text-slate-600">
+                                {{ ucfirst($profile->status_kerja_saat_ini ?? '-') }}
+                            </td>
+                            <td class="py-4 px-4 text-center font-bold text-slate-700">
+                                {{ $profile->lama_menganggur }} Bulan
+                            </td>
+                            <td class="py-4 px-4 text-center">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                    @if($profile->status_verifikasi == 'Verified') bg-emerald-50 text-emerald-700 border border-emerald-100/60
+                                    @elseif($profile->status_verifikasi == 'Rejected') bg-rose-50 text-rose-700 border border-rose-100/60
+                                    @else bg-amber-50 text-amber-700 border border-amber-100/60 @endif">
+                                    {{ $profile->status_verifikasi ?? 'Unverified' }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <a href="{{ route('jobseeker-profiles.show', $profile->id) }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 text-slate-600 transition">
+                                        <i class="fa-solid fa-circle-info"></i> Detail
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="8" class="text-center">Tidak ada data ditemukan</td>
-                    </tr>
+                        <tr>
+                            <td colspan="9" class="py-12 text-center text-sm text-slate-400">
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <i class="fa-solid fa-users-slash text-3xl text-slate-300"></i>
+                                    <span>Tidak ada data pencari kerja ditemukan.</span>
+                                </div>
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
 
-            <div class="mt-3">
+        @if($profiles->hasPages())
+            <div class="px-6 py-4 border-t border-slate-100">
                 {{ $profiles->links() }}
             </div>
-        </div>
+        @endif
     </div>
+
 </div>
 @endsection

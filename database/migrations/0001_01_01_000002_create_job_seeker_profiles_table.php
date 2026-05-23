@@ -43,6 +43,7 @@ return new class extends Migration
             $table->decimal('pendapatan_bulanan', 12, 2)->default(0);
             $table->unsignedInteger('jumlah_tanggungan')->default(0);
             $table->boolean('is_penerima_bansos_lain')->default(false);
+            $table->enum('status_verifikasi', ['Unverified', 'Verified', 'Rejected'])->default('Unverified');
             
             $table->timestamps();
         });

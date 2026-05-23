@@ -42,6 +42,8 @@ class JobSeekerProfileSeeder extends Seeder
                 ]
             );
 
+            $user->assignRole('job_seeker');
+
             JobSeekerProfile::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -52,10 +54,11 @@ class JobSeekerProfileSeeder extends Seeder
                     'alamat_ktp' => 'Jl. Contoh No.' . rand(10,99) . ', Palu',
                     'no_hp' => '08' . rand(10000000, 99999999),
                     'pendidikan_terakhir' => ['SMA/SMK', 'D3', 'S1'][rand(0,2)],
-                    'status_kerja_saat_ini' => ['Menganggur', 'Bekerja Serabutan', 'PHK'][rand(0,2)],
-                    'lama_menganggur' => rand(0, 24),
+                    'status_kerja_saat_ini' => ['Menganggur', 'Bekerja', 'Freelance', 'Wirausaha'][rand(0,3)],
+                    'lama_menganggur' => rand(1, 24),
                     'pendapatan_bulanan' => rand(500000, 5000000),
-                    'jumlah_tanggungan' => rand(0, 5),
+                    'jumlah_tanggungan' => rand(1, 5),
+                    'status_verifikasi' => 'Verified', // Set default ke Verified untuk perhitungan SAW
                 ]
             );
         }

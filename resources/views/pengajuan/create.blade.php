@@ -1,48 +1,84 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="max-w-2xl mx-auto mt-10">
-    <div class="bg-white shadow-lg rounded-xl p-8">
-        <h2 class="text-2xl font-bold mb-6">Ajukan Bantuan Baru</h2>
+@section('title', 'Ajukan Bantuan Baru')
 
-        <form action="{{ route('pengajuan-bantuan.store') }}" method="POST">
+@section('content')
+<div class="max-w-2xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('pengajuan-bantuan.index') }}" class="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-slate-200/80 shadow-sm text-slate-600 hover:text-slate-900 transition">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Ajukan Bantuan Baru</h1>
+                <p class="text-xs text-slate-400 font-medium">Buat permohonan bantuan sosial baru ke instansi Dinas</p>
+            </div>
+        </div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
+            <i class="fa-solid fa-file-invoice-dollar"></i> Peran Aktif: Pencari Kerja
+        </span>
+    </div>
+
+    <!-- Form Container -->
+    <div class="rounded-3xl bg-white border border-slate-200/80 shadow-sm overflow-hidden p-8">
+        
+        <!-- Validation Errors -->
+        @if ($errors->any())
+            <div class="rounded-2xl bg-rose-50 p-4 border border-rose-200/80 text-rose-800 space-y-1 mb-6">
+                <div class="flex gap-2 items-center text-xs font-bold mb-1">
+                    <i class="fa-solid fa-circle-exclamation text-rose-500 text-sm"></i>
+                    <span>Terdapat beberapa kesalahan input:</span>
+                </div>
+                <ul class="text-[11px] list-disc list-inside text-rose-700 leading-relaxed pl-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('pengajuan-bantuan.store') }}" method="POST" class="space-y-6">
             @csrf
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Jenis Bantuan</label>
-                <select name="jenis_bantuan" class="w-full border border-gray-300 rounded-lg px-4 py-3" required>
+            <!-- Jenis Bantuan -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Jenis Bantuan Yang Diperlukan <span class="text-rose-500">*</span></label>
+                <select name="jenis_bantuan" class="rounded-xl border border-slate-200 px-4 py-3 text-sm bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" required>
                     <option value="">Pilih Jenis Bantuan</option>
-                    <option value="subsidi_upah">Subsidi Upah</option>
-                    <option value="pelatihan">Pelatihan Kerja</option>
-                    <option value="modal_umkm">Modal Usaha UMKM</option>
-                    <option value="lainnya">Lainnya</option>
+                    <option value="subsidi_upah" {{ old('jenis_bantuan') == 'subsidi_upah' ? 'selected' : '' }}>Subsidi Upah</option>
+                    <option value="pelatihan" {{ old('jenis_bantuan') == 'pelatihan' ? 'selected' : '' }}>Pelatihan Kerja</option>
+                    <option value="modal_umkm" {{ old('jenis_bantuan') == 'modal_umkm' ? 'selected' : '' }}>Modal Usaha UMKM</option>
+                    <option value="lainnya" {{ old('jenis_bantuan') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                 </select>
             </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Nominal Diajukan (Rp)</label>
-                <input type="number" name="nominal_diajukan" 
-                       class="w-full border border-gray-300 rounded-lg px-4 py-3" 
-                       placeholder="Contoh: 2500000">
+            <!-- Nominal Diajukan -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Nominal Yang Diajukan (Rp)</label>
+                <input type="number" name="nominal_diajukan" class="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="{{ old('nominal_diajukan') }}" placeholder="Contoh: 2500000">
             </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Alasan Pengajuan <span class="text-red-500">*</span></label>
-                <textarea name="alasan" rows="5" 
-                          class="w-full border border-gray-300 rounded-lg px-4 py-3" 
-                          placeholder="Jelaskan alasan Anda mengajukan bantuan..." required></textarea>
+            <!-- Alasan Pengajuan -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Alasan Detail Pengajuan Bantuan <span class="text-rose-500">*</span></label>
+                <textarea name="alasan" rows="5" class="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" required placeholder="Jelaskan kondisi ekonomi Anda atau tujuan pengajuan dana bantuan ini (Minimal 30 karakter)...">{{ old('alasan') }}</textarea>
+                <span class="text-[10px] text-slate-400 font-medium">Penjelasan detail membantu Verifikator menyetujui ajuan Anda.</span>
             </div>
 
-            <div class="flex gap-4">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium">
-                    Kirim Pengajuan
+            <!-- Action Buttons -->
+            <div class="flex gap-4 pt-4 border-t border-slate-100">
+                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-xs font-bold text-white shadow-md shadow-indigo-100 hover:bg-indigo-700 transition">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan
                 </button>
-                <a href="{{ route('pengajuan-bantuan.index') }}" 
-                   class="bg-gray-300 hover:bg-gray-400 px-8 py-3 rounded-lg font-medium">
+                <a href="{{ route('pengajuan-bantuan.index') }}" class="inline-flex items-center justify-center rounded-xl bg-slate-100 px-6 py-3 text-xs font-bold text-slate-700 hover:bg-slate-200 transition">
                     Batal
                 </a>
             </div>
+
         </form>
     </div>
+
 </div>
 @endsection

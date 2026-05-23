@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PengajuanBantuan;
+use App\Models\RiwayatBantuan;
 use App\Notifications\StatusPengajuanBerubah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -131,6 +132,64 @@ class PengajuanBantuanController extends Controller
         return back()->with('success', 'Pengajuan ditolak.');
     }
 
+    public function edit(PengajuanBantuan $pengajuan)
+    {
+        if ($pengajuan->pencari_kerja_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke pengajuan ini.');
+        }
+
+        if (strtolower($pengajuan->status) !== 'pending') {
+            return redirect()->route('pengajuan-bantuan.show', $pengajuan)
+                             ->with('error', 'Hanya pengajuan dengan status pending yang dapat diubah.');
+        }
+
+        return view('pengajuan.edit', compact('pengajuan'));
+    }
+
+    public function update(Request $request, PengajuanBantuan $pengajuan)
+    {
+        if ($pengajuan->pencari_kerja_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (strtolower($pengajuan->status) !== 'pending') {
+            return redirect()->route('pengajuan-bantuan.show', $pengajuan)
+                             ->with('error', 'Hanya pengajuan dengan status pending yang dapat diubah.');
+        }
+
+        $request->validate([
+            'jenis_bantuan'    => 'required|in:subsidi_upah,pelatihan,modal_umkm,lainnya',
+            'alasan'           => 'required|min:30',
+            'nominal_diajukan' => 'nullable|numeric|min:0',
+        ]);
+
+        $pengajuan->update([
+            'jenis_bantuan'    => $request->jenis_bantuan,
+            'alasan'           => $request->alasan,
+            'nominal_diajukan' => $request->nominal_diajukan,
+        ]);
+
+        return redirect()->route('pengajuan-bantuan.show', $pengajuan)
+                         ->with('success', 'Pengajuan bantuan berhasil diperbarui.');
+    }
+
+    public function destroy(PengajuanBantuan $pengajuan)
+    {
+        if ($pengajuan->pencari_kerja_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (strtolower($pengajuan->status) !== 'pending') {
+            return redirect()->route('pengajuan-bantuan.show', $pengajuan)
+                             ->with('error', 'Hanya pengajuan dengan status pending yang dapat dihapus.');
+        }
+
+        $pengajuan->delete();
+
+        return redirect()->route('pengajuan-bantuan.index')
+                         ->with('success', 'Pengajuan bantuan berhasil dihapus.');
+    }
+
     public function salurkan(Request $request, PengajuanBantuan $pengajuan)
     {
         if (!Auth::user()->isAdmin()) {
@@ -144,6 +203,14 @@ class PengajuanBantuanController extends Controller
         $pengajuan->update([
             'status'             => 'disalurkan',
             'tanggal_penyaluran' => now(),
+        ]);
+
+        // Simpan riwayat penyaluran bantuan
+        RiwayatBantuan::create([
+            'pengajuan_id'      => $pengajuan->id,
+            'nominal_diterima'  => $pengajuan->nominal_diajukan ?? 0,
+            'tanggal_penyaluran'=> now()->format('Y-m-d'),
+            'keterangan'        => 'Disalurkan ke rekening: ' . $request->rekening_penerima,
         ]);
 
         $pengajuan->pencariKerja->notify(new StatusPengajuanBerubah(

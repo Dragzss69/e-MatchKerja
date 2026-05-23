@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('admin/jobseekers', [JobSeekerProfileController::class, 'index'])->name('admin.jobseekers.index');
+    Route::get('admin/jobseekers/{id}', [JobSeekerProfileController::class, 'show'])->name('jobseeker-profiles.show');
     Route::get('admin/lowongan', [LowonganKerjaController::class, 'index'])->name('admin.lowongan.index');
 
     Route::get('jobseeker/profile/create', [JobSeekerProfileController::class, 'create'])->name('jobseeker.profile.create');
@@ -59,12 +60,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [App\Http\Controllers\PengajuanBantuanController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\PengajuanBantuanController::class, 'store'])->name('store');
         Route::get('/{pengajuan}', [App\Http\Controllers\PengajuanBantuanController::class, 'show'])->name('show');
+        Route::get('/{pengajuan}/edit', [App\Http\Controllers\PengajuanBantuanController::class, 'edit'])->name('edit');
+        Route::put('/{pengajuan}', [App\Http\Controllers\PengajuanBantuanController::class, 'update'])->name('update');
+        Route::delete('/{pengajuan}', [App\Http\Controllers\PengajuanBantuanController::class, 'destroy'])->name('destroy');
 
         // Approval Workflow
         Route::post('/{pengajuan}/verifikasi', [App\Http\Controllers\PengajuanBantuanController::class, 'verifikasi'])->name('verifikasi');
         Route::post('/{pengajuan}/approve', [App\Http\Controllers\PengajuanBantuanController::class, 'approve'])->name('approve');
         Route::post('/{pengajuan}/tolak', [App\Http\Controllers\PengajuanBantuanController::class, 'tolak'])->name('tolak');
-        Route::post('/{pengajuan}/disalurkan', [App\Http\Controllers\PengajuanBantuanController::class, 'disalurkan'])->name('disalurkan');
+        Route::post('/{pengajuan}/salurkan', [App\Http\Controllers\PengajuanBantuanController::class, 'salurkan'])->name('salurkan');
     });
 
     // Laporan Bantuan
@@ -84,6 +88,3 @@ Route::get('/forgot-password', function () {
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
 Route::get('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.markRead');
-
-// Salurkan
-Route::post('/pengajuan-bantuan/{pengajuan}/salurkan', [PengajuanBantuanController::class, 'salurkan'])->name('pengajuan-bantuan.salurkan');

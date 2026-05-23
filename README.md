@@ -1,58 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# e-MatchKerja 💼
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**e-MatchKerja** adalah platform web terpadu yang menggabungkan portal karir pencarian lowongan kerja lokal dengan **Sistem Pendukung Keputusan (SPK)** penyaluran bantuan sosial menggunakan metode **Simple Additive Weighting (SAW)**. Aplikasi ini dirancang untuk mempermudah pencari kerja menemukan karir yang sesuai sekaligus memastikan bantuan sosial dari instansi dinas disalurkan secara objektif, transparan, dan tepat sasaran.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Panduan Instalasi & Setup (Dari Git Clone ke Running)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Ikuti langkah-langkah di bawah ini untuk menjalankan proyek e-MatchKerja di komputer lokal Anda:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Prasyarat Sistem
+Pastikan komputer Anda sudah terinstal:
+*   **PHP** (minimal versi 8.3)
+*   **Composer** (pengelola library PHP)
+*   **Node.js & NPM** (untuk kompilasi aset frontend)
+*   **MySQL / MariaDB** (melalui Laragon, XAMPP, atau database manager lokal)
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 2. Kloning Repositori
+Buka terminal/CMD Anda, lalu jalankan perintah kloning:
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/UsernameAnda/e-MatchKerja.git
+cd e-MatchKerja
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 3. Instalasi Dependency Backend & Frontend
+Instal semua package PHP (Laravel) dan JavaScript yang dibutuhkan:
+```bash
+# Instal Backend Library
+composer install
 
-## Contributing
+# Instal Frontend Packages
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Konfigurasi Environment (`.env`)
+Salin file konfigurasi contoh dan buat file `.env` baru:
+```bash
+cp .env.example .env
+```
+Buka file `.env` yang baru dibuat menggunakan kode editor, lalu sesuaikan koneksi database Anda:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=e_matchkerja
+DB_USERNAME=root
+DB_PASSWORD=
+```
+*Catatan: Buat database kosong bernama `e_matchkerja` di phpMyAdmin atau DBMS lokal Anda sebelum melanjutkan.*
 
-## Code of Conduct
+### 5. Generate Application Key & Storage Link
+Buat key aplikasi Laravel dan hubungkan folder storage agar file scan dokumen (KTP/KK) dapat diakses secara publik:
+```bash
+php artisan key:generate
+php artisan storage:link
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 6. Migrasi Database & Seeding Data Awal
+Jalankan migrasi tabel beserta seeder untuk mempopulasikan role, kriteria SPK, dan akun demo pengujian:
+```bash
+php artisan migrate:fresh --seed
+```
 
-## Security Vulnerabilities
+### 7. Jalankan Server Lokal
+Jalankan server PHP dan compiler Vite frontend secara bersamaan:
+```bash
+# Jalankan web server Laravel
+php artisan serve
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Jalankan Vite dev server (di terminal baru)
+npm run dev
+```
+Aplikasi Anda sekarang aktif dan dapat diakses melalui browser di alamat [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 👥 Akun Demo Pengujian (Seeder Credentials)
+
+Anda dapat masuk menggunakan akun demo yang sudah disiapkan otomatis oleh seeder:
+
+| Peran (Role) | Alamat Email | Password |
+| :--- | :--- | :--- |
+| **Admin Dinas** | `admin@ematchkerja.test` | `password` |
+| **Petugas Verifikasi** | `petugas@ematchkerja.test` | `password` |
+| **Pencari Kerja 1** | `pencari1@ematchkerja.test` | `password` |
+| **Pencari Kerja 2** | `pencari2@ematchkerja.test` | `password` |
+
+---
+
+## 🔄 Alur & Skenario Penggunaan Website
+
+Aplikasi ini memiliki alur proses terintegrasi yang melibatkan **4 Peran Utama**. Berikut adalah skenario langkah demi langkah untuk menggunakannya:
+
+```mermaid
+graph TD
+    A[Pencari Kerja] -->|1. Isi Profil Lengkap| B(Profil Saya)
+    A -->|2. Ajukan Permohonan| C(Pengajuan Bantuan: Pending)
+    D[Petugas Verifikasi] -->|3. Tinjau Dokumen & Catatan| E(Verifikasi Pengajuan: Diverifikasi)
+    F[Admin Dinas] -->|4. Lihat Ranking SAW & Approve| G(Approval Bantuan: Disetujui)
+    F -->|5. Salurkan Dana ke Rekening| H(Status: Disalurkan & Riwayat Terdaftar)
+    I[Perusahaan / Employer] -->|Aksi Sampingan: Buat Loker| J(Posting Lowongan Pekerjaan)
+```
+
+### Skenario 1: Sisi Pencari Kerja (Masyarakat)
+1. **Registrasi/Login**: Pengguna mendaftar sebagai **Pencari Kerja / Masyarakat** atau login dengan akun `pencari1@ematchkerja.test`.
+2. **Mengisi Profil**: Buka menu **Profil Saya**, lalu isi data secara lengkap (NIK, nama lengkap, tanggal lahir, jenis kelamin, pendidikan, status pekerjaan, lama menganggur, pendapatan bulanan, jumlah tanggungan, serta upload file KTP).
+3. **Mengajukan Bantuan**: Setelah profil lengkap, buka menu **Pengajuan Bantuan**, pilih jenis bantuan sosial (misal: *Modal Usaha UMKM*), tulis nominal yang diajukan, dan berikan alasan detail (minimal 30 karakter). Status pengajuan pertama kali dikirim adalah **Pending**.
+4. **Mencari Kerja**: Buka menu **Cari Pekerjaan** untuk meninjau kualifikasi lowongan aktif yang diposting oleh perusahaan dan melamar melalui tombol lamar.
+
+### Skenario 2: Sisi Petugas Verifikasi (Petugas Lapangan)
+1. **Login**: Petugas masuk ke sistem menggunakan email `petugas@ematchkerja.test`.
+2. **Meninjau Pengajuan**: Pada dasbor, Petugas akan melihat daftar pengajuan bantuan masuk yang berstatus **Pending**.
+3. **Verifikasi**: Buka detail pengajuan, baca alasan, dan tinjau lampiran berkas KTP pemohon. Petugas mengisi kolom **Catatan Hasil Verifikasi Lapangan** (misal: *"Berkas NIK terbukti valid setelah dicocokkan dengan fisik"*), kemudian mengklik tombol **Verifikasi Data**. Status pengajuan kini berubah menjadi **Diverifikasi**.
+
+### Skenario 3: Sisi Admin Dinas (Dinas Sosial)
+1. **Login**: Admin masuk menggunakan email `admin@ematchkerja.test`.
+2. **Kalkulasi SAW Kelayakan**: Buka menu **SPK Kelayakan Bantuan**. Di sini, sistem otomatis melakukan kalkulasi menggunakan algoritma SAW berdasarkan kriteria (Status Kerja, Lama Menganggur, Pendapatan, Dependen, dan Penerimaan Bansos Lain). Hanya pencari kerja yang status profilnya sudah **Verified** yang akan diurutkan dari skor kelayakan tertinggi (Skor Preferensi V).
+3. **Persetujuan Pengajuan**: Buka menu **Laporan Bantuan** atau detail pengajuan bantuan yang statusnya telah **Diverifikasi** oleh petugas. Isi **Catatan Persetujuan**, lalu klik **Setujui Pengajuan**. Status pengajuan kini berubah menjadi **Disetujui**.
+4. **Penyaluran Dana**: Pada halaman detail pengajuan yang telah disetujui, Admin memasukkan nomor rekening bank penerima pada kolom penyaluran, lalu mengeklik **Tandai Telah Disalurkan**. Rekam data pembayaran otomatis tercatat di tabel `riwayat_bantuan`, dan status pengajuan selesai di tahapan **Disalurkan**.
+5. **Unduh Rekap**: Admin dapat mengunduh seluruh rangkuman laporan dalam bentuk file Excel/CSV atau dokumen cetak PDF di menu **Laporan Bantuan**.
+
+### Skenario 4: Sisi Perusahaan (Employer)
+1. **Registrasi/Login**: Pengguna mendaftar sebagai **Perusahaan / Employer** (atau dibuat melalui registrasi form awal).
+2. **Posting Lowongan**: Perusahaan masuk ke menu **Post Lowongan Baru**, mengisi posisi pekerjaan, kuota pelamar, nominal gaji penawaran, lokasi penempatan, deadline pendaftaran, deskripsi pekerjaan, serta kualifikasi keahlian.
+3. **Manajemen Lowongan**: Perusahaan dapat menonaktifkan lowongan kerja (mengubah status ke *Ditutup*), mengedit isi rincian loker, atau menghapusnya jika kuota rekrutmen sudah terpenuhi.
