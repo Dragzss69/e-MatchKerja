@@ -36,5 +36,7 @@
     </form>
 
     <p class="small">Belum punya akun? <a href="{{ route('register') }}">Register</a></p>
-    <p class="small"><a href="{{ route('password.request') }}">Lupa password?</a></p>
+    
+    <!-- Link Lupa Password dinonaktifkan karena route belum dibuat -->
+    <p class="small text-muted">Lupa password? (Fitur belum diimplementasikan)</p>
 @endsection
