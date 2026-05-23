@@ -48,3 +48,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/forgot-password', function () {
     return redirect()->back()->with('info', 'Fitur Lupa Password sedang dalam pengembangan.');
 })->name('password.request');
+
+// Notifikasi
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+Route::get('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.markRead');
+
+// Salurkan
+Route::post('/pengajuan-bantuan/{pengajuan}/salurkan', [PengajuanBantuanController::class, 'salurkan'])->name('pengajuan-bantuan.salurkan');
