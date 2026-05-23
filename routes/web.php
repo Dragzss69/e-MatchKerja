@@ -3,22 +3,24 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobSeekerProfileController;
 use App\Http\Controllers\LowonganKerjaController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PengajuanBantuanController;
 use App\Http\Controllers\SpkBantuanController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return auth()->check() ? redirect()->route('dashboard') : view('welcome');
 });
 
-<<<<<<< HEAD
 Route::middleware(['auth'])->group(function () {
+    Route::get('dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
     // Jalur halaman rekomendasi bantuan sosial berbasis risiko ekonomi
     Route::get('/admin/rekomendasi-bantuan', [SpkBantuanController::class, 'index'])->name('admin.spk.index');
 });
 
-=======
-// ====================== AUTH ======================
->>>>>>> origin/person4-data
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AuthController::class, 'login']);
@@ -29,7 +31,23 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-<<<<<<< HEAD
+
+    Route::get('admin/jobseekers', [JobSeekerProfileController::class, 'index'])->name('admin.jobseekers.index');
+    Route::get('admin/lowongan', [LowonganKerjaController::class, 'index'])->name('admin.lowongan.index');
+
+    Route::get('jobseeker/profile/create', [JobSeekerProfileController::class, 'create'])->name('jobseeker.profile.create');
+    Route::post('jobseeker/profile', [JobSeekerProfileController::class, 'store'])->name('jobseeker.profile.store');
+    Route::get('jobseeker/profile/{id}/edit', [JobSeekerProfileController::class, 'edit'])->name('jobseeker-profiles.edit');
+    Route::put('jobseeker/profile/{id}', [JobSeekerProfileController::class, 'update'])->name('jobseeker-profiles.update');
+    Route::delete('jobseeker/profile/{id}', [JobSeekerProfileController::class, 'destroy'])->name('jobseeker-profiles.destroy');
+
+    Route::get('lowongan', [LowonganKerjaController::class, 'index'])->name('lowongan.index');
+    Route::get('lowongan/create', [LowonganKerjaController::class, 'create'])->name('perusahaan.lowongan.create');
+    Route::post('lowongan', [LowonganKerjaController::class, 'store'])->name('perusahaan.lowongan.store');
+    Route::get('lowongan/{id}', [LowonganKerjaController::class, 'show'])->name('lowongan.show');
+    Route::get('lowongan/{id}/edit', [LowonganKerjaController::class, 'edit'])->name('lowongan.edit');
+    Route::put('lowongan/{id}', [LowonganKerjaController::class, 'update'])->name('lowongan.update');
+    Route::delete('lowongan/{id}', [LowonganKerjaController::class, 'destroy'])->name('lowongan.destroy');
 });
 
 // ================== PENGATURAN BANTUAN (Person 5) ==================
@@ -69,36 +87,3 @@ Route::get('/notifications/{id}/read', [NotificationController::class, 'markRead
 
 // Salurkan
 Route::post('/pengajuan-bantuan/{pengajuan}/salurkan', [PengajuanBantuanController::class, 'salurkan'])->name('pengajuan-bantuan.salurkan');
-=======
-
-    // ====================== JOB SEEKER PROFILE (Person 4) ======================
-    Route::get('/profil-saya', [JobSeekerProfileController::class, 'create'])
-         ->name('jobseeker.profile.create');
-         
-    Route::post('/profil-saya', [JobSeekerProfileController::class, 'store'])
-         ->name('jobseeker.profile.store');
-
-    Route::resource('jobseeker-profiles', JobSeekerProfileController::class)
-         ->except(['create', 'store']);
-
-    Route::get('admin/jobseekers', [JobSeekerProfileController::class, 'index'])
-         ->name('admin.jobseekers.index');
-
-    // ====================== LOWONGAN KERJA (Person 4) ======================
-    
-    // Untuk Perusahaan memposting lowongan
-    Route::get('/lowongan-saya', [LowonganKerjaController::class, 'create'])
-         ->name('perusahaan.lowongan.create');
-         
-    Route::post('/lowongan-saya', [LowonganKerjaController::class, 'store'])
-         ->name('perusahaan.lowongan.store');
-
-    // Resource Route untuk Admin / Umum
-    Route::resource('lowongan', LowonganKerjaController::class)
-         ->except(['create', 'store']);   // create & store sudah di atas
-
-    // Route tambahan untuk Admin
-    Route::get('admin/lowongan', [LowonganKerjaController::class, 'index'])
-         ->name('admin.lowongan.index');
-});
->>>>>>> origin/person4-data

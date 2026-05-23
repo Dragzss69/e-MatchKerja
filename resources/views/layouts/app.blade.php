@@ -94,6 +94,7 @@
             </div>
             <div style="display:flex; align-items:center;">
                 @auth
+                    <a href="{{ route('dashboard') }}">Dashboard</a>
                     <a href="{{ url('/laporan') }}">Laporan Bantuan</a>
 
                     {{-- Bell Notifikasi --}}
@@ -149,23 +150,18 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('logout') }}" method="POST" style="display:inline; margin-left:16px;">
-            <h1>e-MatchKerja</h1>
-            
-            <div class="nav">
-                @auth
-                    @if (Auth::user()->hasRole('admin') || true) <!-- sementara semua bisa akses -->
+                    <div class="nav">
                         <a href="{{ route('admin.jobseekers.index') }}">Pencari Kerja</a>
                         <a href="{{ route('admin.lowongan.index') }}">Lowongan</a>
-                    @endif
-
-                    <a href="{{ route('jobseeker.profile.create') }}">Profil Saya</a>
-                    <a href="{{ route('perusahaan.lowongan.create') }}">Posting Lowongan</a>
-                        @csrf
-                        <button type="submit" style="background:none; border:none; color:white; cursor:pointer;">
-                            Logout
-                        </button>
-                    </form>
+                        <a href="{{ route('jobseeker.profile.create') }}">Profil Saya</a>
+                        <a href="{{ route('perusahaan.lowongan.create') }}">Posting Lowongan</a>
+                        <form action="{{ route('logout') }}" method="POST" style="display:inline; margin-left:16px;">
+                            @csrf
+                            <button type="submit" style="background:none; border:none; color:white; cursor:pointer;">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
                 @else
                     <a href="{{ route('login') }}">Login</a>
                     <a href="{{ route('register') }}">Register</a>
@@ -180,10 +176,6 @@
 
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
-
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
         @yield('content')
