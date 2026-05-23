@@ -4,7 +4,7 @@
     <h2>Login</h2>
 
     @if ($errors->any())
-        <div class="alert alert-error">
+        <div class="alert alert-danger">
             <ul style="margin: 0; padding-left: 18px;">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -32,9 +32,20 @@
             </label>
         </div>
 
-        <button type="submit">Login</button>
+        <button type="submit" class="btn btn-primary">Login</button>
     </form>
 
+<<<<<<< HEAD
     <p class="small">Belum punya akun? <a href="{{ route('register') }}">Register</a></p>
     <!-- <p class="small"><a href="{{ route('password.request') }}">Lupa password?</a></p> -->
+=======
+    <p class="small mt-3">
+        Belum punya akun? 
+        <a href="{{ route('register') }}">Register</a>
+    </p>
+
+    {{-- Lupa Password dinonaktifkan sementara karena route belum dibuat --}}
+    {{-- <p class="small"><a href="#">Lupa password?</a></p> --}}
+
+>>>>>>> origin/person4-data
 @endsection
