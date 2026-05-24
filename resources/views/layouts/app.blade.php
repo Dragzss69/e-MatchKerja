@@ -80,9 +80,6 @@
 
     {{-- ===== VERIFIER ===== --}}
     @if(auth()->user()->isVerifier())
-        <a href="{{ route('admin.spk.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.spk.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
-            Rekomendasi Kelayakan
-        </a>
         <a href="{{ route('pengajuan-bantuan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('pengajuan-bantuan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
             Verifikasi Pengajuan
         </a>
@@ -339,9 +336,6 @@
 
                         {{-- VERIFIER mobile --}}
                         @if(auth()->user()->isVerifier())
-                            <a href="{{ route('admin.spk.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('admin.spk.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
-                                <i class="fa-solid fa-star-half-stroke mr-2 text-slate-400"></i> Rekomendasi Kelayakan
-                            </a>
                             <a href="{{ route('pengajuan-bantuan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('pengajuan-bantuan.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
                                 <i class="fa-solid fa-list-check mr-2 text-slate-400"></i> Verifikasi Pengajuan
                             </a>

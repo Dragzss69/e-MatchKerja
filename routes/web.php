@@ -40,12 +40,12 @@ Route::middleware('auth')->group(function () {
         if ($user->hasRole(Role::EMPLOYER)) {
             return redirect()->route('perusahaan.dashboard');
         } elseif ($user->hasRole(Role::ADMIN)) {
-            return redirect()->route('admin.jobseekers.index');
+            return view('dashboard');
         } elseif ($user->hasRole(Role::VERIFIER)) {
             return redirect()->route('verifier.dashboard');
         } elseif ($user->hasRole(Role::JOB_SEEKER)) {
-        return redirect()->route('pencari-kerja.dashboard'); // ← UBAH KE DASHBOARD PENCAKAR KERJA
-    }
+            return redirect()->route('pencari-kerja.dashboard');
+        }
 
         return redirect()->route('lowongan.index');
     })->name('dashboard');
