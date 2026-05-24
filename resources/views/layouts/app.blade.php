@@ -58,6 +58,7 @@
                             Dashboard
                         </a>
                         
+                        {{-- ===== ADMIN ===== --}}
                         @if(auth()->user()->isAdmin())
                             <a href="{{ route('admin.spk.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.spk.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                                 SPK Kelayakan Bantuan
@@ -68,8 +69,12 @@
                             <a href="{{ route('admin.lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.lowongan.*') || request()->routeIs('lowongan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                                 Kelola Lowongan
                             </a>
+                            <a href="{{ route('laporan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('laporan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Laporan Bantuan
+                            </a>
                         @endif
 
+                        {{-- ===== VERIFIER ===== --}}
                         @if(auth()->user()->isVerifier())
                             <a href="{{ route('admin.spk.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('admin.spk.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                                 Rekomendasi Kelayakan
@@ -77,8 +82,12 @@
                             <a href="{{ route('pengajuan-bantuan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('pengajuan-bantuan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                                 Verifikasi Pengajuan
                             </a>
+                            <a href="{{ route('laporan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('laporan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+                                Laporan Bantuan
+                            </a>
                         @endif
 
+                        {{-- ===== EMPLOYER ===== --}}
                         @if(auth()->user()->isEmployer())
                             <a href="{{ route('lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('lowongan.index') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
                                 Daftar Lowongan Saya
@@ -88,21 +97,29 @@
                             </a>
                         @endif
 
-                        @if(auth()->user()->isJobSeeker())
-                            <a href="{{ route('jobseeker.profile.create') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('jobseeker.profile.create') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
-                                Profil Saya
-                            </a>
-                            <a href="{{ route('pengajuan-bantuan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('pengajuan-bantuan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
-                                Pengajuan Bantuan
-                            </a>
-                            <a href="{{ route('lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('lowongan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
-                                Cari Pekerjaan
-                            </a>
-                        @endif
-
-                        <a href="{{ route('laporan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('laporan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
-                            Laporan Bantuan
-                        </a>
+                        {{-- ===== JOB SEEKER ===== --}}
+@if(auth()->user()->isJobSeeker())
+    @php $seekerProfileNav = auth()->user()->jobSeekerProfile; @endphp
+    @if($seekerProfileNav)
+        <a href="{{ route('jobseeker.profile.show') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('jobseeker.profile.show') || request()->routeIs('jobseeker.profile.edit') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+            <i class="fa-solid fa-id-card mr-1"></i> Profil Saya
+        </a>
+    @else
+        <a href="{{ route('jobseeker.profile.create') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('jobseeker.profile.create') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+            <i class="fa-solid fa-id-card mr-1"></i> Profil Saya
+            <span class="ml-1 inline-flex h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+        </a>
+    @endif
+    <a href="{{ route('pengajuan-bantuan.create') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('pengajuan-bantuan.create') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+        <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Ajukan Bantuan
+    </a>
+    <a href="{{ route('pengajuan-bantuan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('pengajuan-bantuan.index') || request()->routeIs('pengajuan-bantuan.show') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+        <i class="fa-solid fa-clock-rotate-left mr-1"></i> Riwayat Bantuan
+    </a>
+    <a href="{{ route('lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('lowongan.*') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+        <i class="fa-solid fa-briefcase mr-1"></i> Cari Pekerjaan
+    </a>
+@endif
                     </div>
                     @endauth
 
@@ -245,50 +262,71 @@
             <div x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false" x-transition class="md:hidden border-b border-slate-200 bg-white">
                 <div class="space-y-1.5 px-4 pb-4 pt-2">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                            Dashboard
+                        <a href="{{ route('dashboard') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                            <i class="fa-solid fa-gauge-high mr-2 text-slate-400"></i> Dashboard
                         </a>
+
+                        {{-- ADMIN mobile --}}
                         @if(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.spk.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                SPK Kelayakan Bantuan
+                            <a href="{{ route('admin.spk.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('admin.spk.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-star-half-stroke mr-2 text-slate-400"></i> SPK Kelayakan Bantuan
                             </a>
-                            <a href="{{ route('admin.jobseekers.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Data Pencari Kerja
+                            <a href="{{ route('admin.jobseekers.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('admin.jobseekers.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-users mr-2 text-slate-400"></i> Data Pencari Kerja
                             </a>
-                            <a href="{{ route('admin.lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Kelola Lowongan
+                            <a href="{{ route('admin.lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('admin.lowongan.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-briefcase mr-2 text-slate-400"></i> Kelola Lowongan
+                            </a>
+                            <a href="{{ route('laporan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('laporan.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-chart-bar mr-2 text-slate-400"></i> Laporan Bantuan
                             </a>
                         @endif
+
+                        {{-- VERIFIER mobile --}}
                         @if(auth()->user()->isVerifier())
-                            <a href="{{ route('admin.spk.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Rekomendasi Kelayakan
+                            <a href="{{ route('admin.spk.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('admin.spk.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-star-half-stroke mr-2 text-slate-400"></i> Rekomendasi Kelayakan
                             </a>
-                            <a href="{{ route('pengajuan-bantuan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Verifikasi Pengajuan
+                            <a href="{{ route('pengajuan-bantuan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('pengajuan-bantuan.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-list-check mr-2 text-slate-400"></i> Verifikasi Pengajuan
+                            </a>
+                            <a href="{{ route('laporan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('laporan.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-chart-bar mr-2 text-slate-400"></i> Laporan Bantuan
                             </a>
                         @endif
+
+                        {{-- EMPLOYER mobile --}}
                         @if(auth()->user()->isEmployer())
-                            <a href="{{ route('lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Daftar Lowongan Saya
+                            <a href="{{ route('lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('lowongan.index') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-list mr-2 text-slate-400"></i> Daftar Lowongan Saya
                             </a>
-                            <a href="{{ route('perusahaan.lowongan.create') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Post Lowongan Baru
-                            </a>
-                        @endif
-                        @if(auth()->user()->isJobSeeker())
-                            <a href="{{ route('jobseeker.profile.create') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Profil Saya
-                            </a>
-                            <a href="{{ route('pengajuan-bantuan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Pengajuan Bantuan
-                            </a>
-                            <a href="{{ route('lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                                Cari Pekerjaan
+                            <a href="{{ route('perusahaan.lowongan.create') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('perusahaan.lowongan.create') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+                                <i class="fa-solid fa-plus mr-2 text-slate-400"></i> Post Lowongan Baru
                             </a>
                         @endif
-                        <a href="{{ route('laporan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50">
-                            Laporan Bantuan
-                        </a>
+
+                        {{-- JOB SEEKER mobile --}}
+@if(auth()->user()->isJobSeeker())
+    @php $seekerProfileNavMob = auth()->user()->jobSeekerProfile; @endphp
+    @if($seekerProfileNavMob)
+        <a href="{{ route('jobseeker.profile.show') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('jobseeker.profile.show') || request()->routeIs('jobseeker.profile.edit') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+            <i class="fa-solid fa-id-card mr-2 text-slate-400"></i> Profil Saya
+        </a>
+    @else
+        <a href="{{ route('jobseeker.profile.create') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100">
+            <i class="fa-solid fa-triangle-exclamation mr-2"></i> Lengkapi Profil
+        </a>
+    @endif
+    <a href="{{ route('pengajuan-bantuan.create') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('pengajuan-bantuan.create') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+        <i class="fa-solid fa-file-invoice-dollar mr-2 text-slate-400"></i> Ajukan Bantuan
+    </a>
+    <a href="{{ route('pengajuan-bantuan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('pengajuan-bantuan.index') || request()->routeIs('pengajuan-bantuan.show') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+        <i class="fa-solid fa-clock-rotate-left mr-2 text-slate-400"></i> Riwayat Bantuan
+    </a>
+    <a href="{{ route('lowongan.index') }}" class="block px-3.5 py-2.5 rounded-xl text-xs font-bold {{ request()->routeIs('lowongan.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700 hover:bg-slate-50' }}">
+        <i class="fa-solid fa-briefcase mr-2 text-slate-400"></i> Cari Pekerjaan
+    </a>
+@endif
                     @endauth
                 </div>
             </div>

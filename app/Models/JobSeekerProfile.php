@@ -4,14 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JobSeekerProfile extends Model
 {
     use HasFactory;
-
-    protected $table = 'job_seeker_profiles';
 
     protected $fillable = [
         'user_id',
@@ -28,6 +24,7 @@ class JobSeekerProfile extends Model
         'pendidikan_terakhir',
         'skills_tags',
         'pengalaman_kerja',
+        'file_cv',
         'status_kerja_saat_ini',
         'lama_menganggur',
         'pendapatan_bulanan',
@@ -36,19 +33,20 @@ class JobSeekerProfile extends Model
     ];
 
     protected $casts = [
-        'tanggal_lahir' => 'date',
-        'skills_tags' => 'array',
-        'pendapatan_bulanan' => 'decimal:2',
+        'tanggal_lahir'          => 'date',
+        'skills_tags'            => 'array',
         'is_penerima_bansos_lain' => 'boolean',
     ];
 
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function verifications(): HasMany
+    public function getUsiaAttribute(): int
     {
-        return $this->hasMany(JobSeekerVerification::class, 'pencari_kerja_id');
+        return $this->tanggal_lahir
+            ? $this->tanggal_lahir->age
+            : 0;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobSeekerProfile;
 use App\Models\PengajuanBantuan;
 use App\Models\RiwayatBantuan;
 use App\Notifications\StatusPengajuanBerubah;
@@ -70,24 +71,51 @@ class PengajuanBantuanController extends Controller
     }
 
     public function verifikasi(Request $request, PengajuanBantuan $pengajuan)
-    {
-        if (!Auth::user()->isVerifier()) {
-            abort(403, 'Hanya Petugas yang bisa melakukan verifikasi.');
-        }
+{
+    if (!Auth::user()->isVerifier()) {
+        abort(403, 'Hanya Petugas yang bisa melakukan verifikasi.');
+    }
 
-        $pengajuan->update([
-            'status'             => 'diverifikasi',
-            'verified_by'        => Auth::id(),
-            'catatan_verifikasi' => $request->catatan_verifikasi,
+    // CEK APAKAH DATA DIRI PENCAKAR KERJA SUDAH TERVERIFIKASI
+    $jobSeekerProfile = $pengajuan->pencariKerja->jobSeekerProfile;
+    
+    if (!$jobSeekerProfile || $jobSeekerProfile->status_verifikasi != 'Verified') {
+        return back()->with('error', 'Tidak dapat memverifikasi pengajuan. Data diri pencari kerja belum terverifikasi. Silakan verifikasi data diri terlebih dahulu.');
+    }
+
+    $pengajuan->update([
+        'status'             => 'diverifikasi',
+        'verified_by'        => Auth::id(),
+        'catatan_verifikasi' => $request->catatan_verifikasi,
+        'tanggal_verifikasi' => now(),
+    ]);
+
+    $pengajuan->pencariKerja->notify(new StatusPengajuanBerubah(
+        $pengajuan,
+        'Pengajuan bantuan kamu sedang dalam proses verifikasi oleh petugas.'
+    ));
+
+    return back()->with('success', 'Pengajuan berhasil diverifikasi.');
+
+    
+}
+    public function verifikasiDataDiri(Request $request, $id)
+    {
+        // Hanya verifier yang bisa verifikasi data diri
+        if (!Auth::user()->isVerifier()) {
+            abort(403, 'Hanya Petugas Verifikasi yang dapat memverifikasi data diri.');
+        }
+        
+        $profile = JobSeekerProfile::findOrFail($id);
+        
+        $profile->update([
+            'status_verifikasi' => 'Verified',
+            'verified_by' => Auth::id(),
             'tanggal_verifikasi' => now(),
         ]);
-
-        $pengajuan->pencariKerja->notify(new StatusPengajuanBerubah(
-            $pengajuan,
-            'Pengajuan bantuan kamu sedang dalam proses verifikasi oleh petugas.'
-        ));
-
-        return back()->with('success', 'Pengajuan berhasil diverifikasi.');
+        
+        return redirect()->route('admin.jobseekers.index')
+                        ->with('success', 'Data diri pencari kerja berhasil diverifikasi.');
     }
 
     public function approve(Request $request, PengajuanBantuan $pengajuan)
