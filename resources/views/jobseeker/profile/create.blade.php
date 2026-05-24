@@ -126,12 +126,12 @@
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Scan Kartu Tanda Penduduk (KTP) <span class="text-rose-500">*</span></label>
                     <input type="file" name="file_ktp" class="rounded-xl border border-slate-200 px-4 py-3 text-xs bg-slate-50 focus:border-indigo-500 focus:outline-none" required>
-                    <span class="text-[10px] text-slate-400 font-medium">Format: PDF Max: 5MB</span>
+                    <span class="text-[10px] text-slate-400 font-medium">Format: PDF/JPG/PNG. Max: 5MB</span>
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Scan Kartu Keluarga (KK)</label>
                     <input type="file" name="file_kk" class="rounded-xl border border-slate-200 px-4 py-3 text-xs bg-slate-50 focus:border-indigo-500 focus:outline-none">
-                    <span class="text-[10px] text-slate-400 font-medium">Format: PDF Max: 5MB</span>
+                    <span class="text-[10px] text-slate-400 font-medium">Format: PDF/JPG/PNG. Max: 5MB</span>
                 </div>
             </div>
 

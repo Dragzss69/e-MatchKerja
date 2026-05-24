@@ -175,7 +175,6 @@ class JobSeekerProfileController extends Controller
     $data = $request->except(['file_ktp', 'file_kk', '_token', '_method']);
     $data['is_penerima_bansos_lain'] = $request->boolean('is_penerima_bansos_lain');
     $data['jenis_kelamin'] = $request->jenis_kelamin;
-    $data['pendapatan_bulanan'] = $request->pendapatan_bulanan ?? 0;
     
     // Konversi status kerja
     $statusKerja = $request->status_kerja_saat_ini;

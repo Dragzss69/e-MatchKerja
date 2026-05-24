@@ -144,7 +144,7 @@
                         <label class="text-xs font-bold text-slate-700">Upload CV <span class="text-rose-500">*</span></label>
                         <input type="file" name="cv" accept=".pdf" required
                                class="w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-indigo-500">
-                        <p class="text-[10px] text-slate-400">Format PDF, maks 2MB</p>
+                        <p class="text-[10px] text-slate-400">Format: PDF, JPG, PNG. Maks: 2MB</p>
                     </div>
                     
                     <div class="space-y-2">
