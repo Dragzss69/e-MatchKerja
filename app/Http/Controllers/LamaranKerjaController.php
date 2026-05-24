@@ -100,6 +100,7 @@ public function pelamar(int $lowongan_id): View
         }
 
         return view('perusahaan.pelamar.show', compact('lamaran'));
+        
     }
 
     /**
@@ -150,13 +151,13 @@ public function pelamar(int $lowongan_id): View
     /**
      * Pencari kerja: riwayat lamaran sendiri
      */
-    public function riwayat(): View
-    {
-        $lamarans = LamaranKerja::with(['lowongan.perusahaan'])
-                        ->where('user_id', Auth::id())
-                        ->latest()
-                        ->get();
+public function riwayat(): View
+{
+    $lamarans = LamaranKerja::with(['lowongan.perusahaan'])
+                    ->where('user_id', Auth::id())
+                    ->latest()
+                    ->paginate(10); // ← Ubah dari get() menjadi paginate(10)
 
-        return view('lamaran.riwayat', compact('lamarans'));
-    }
+    return view('lamaran.riwayat', compact('lamarans'));
+}
 }

@@ -6,11 +6,21 @@
 <div class="space-y-6">
     
     <!-- Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
         <h1 class="text-2xl font-bold text-slate-900">Daftar Lowongan Kerja</h1>
         <p class="text-xs text-slate-400 font-medium mt-1">Temukan pekerjaan impian yang sesuai dengan kualifikasi Anda</p>
     </div>
-
+    
+    <!-- ========== TOMBOL RIWAYAT LAMARAN ========== -->
+    @if(auth()->check() && auth()->user()->isJobSeeker())
+    <a href="{{ route('lamaran.riwayat') }}" 
+       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-sm font-medium transition shadow-sm">
+        <i class="fa-solid fa-history"></i> Riwayat Lamaran Saya
+    </a>
+    @endif
+    <!-- =========================================== -->
+</div>
     <!-- Search & Filter Card -->
     <div class="rounded-2xl bg-white border border-slate-200/80 shadow-sm p-5">
         <form method="GET" action="{{ route('lowongan.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">

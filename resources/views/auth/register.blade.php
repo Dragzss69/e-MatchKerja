@@ -9,7 +9,7 @@
         <!-- Header -->
         <div class="text-center space-y-2">
             <h2 class="text-2xl font-black text-slate-900 tracking-tight">Daftar Akun Baru</h2>
-            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Lengkapi data untuk bergabung ke e-MatchKerja</p>
+            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Lengkapi data untuk bergabung ke AnoJobs</p>
         </div>
 
         <!-- Validation Errors -->

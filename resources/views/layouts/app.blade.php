@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'e-MatchKerja') - Platform SPK Penyaluran Bantuan & Karir</title>
+    <title>@yield('title', 'AnoJobs') - Platform SPK Penyaluran Bantuan & Karir</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,7 +45,7 @@
                                 <i class="fa-solid fa-briefcase text-white text-lg"></i>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-lg font-bold tracking-tight text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors">e-MatchKerja</span>
+                                <span class="text-lg font-bold tracking-tight text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors">AnoJobs</span>
                                 <span class="text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-none">SPK & Karir</span>
                             </div>
                         </a>
@@ -58,7 +58,7 @@
     <!-- DASHBOARD MENU (dengan active class) -->
     <a href="{{ route('dashboard') }}" 
        class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 
-       {{ request()->routeIs('dashboard') || request()->routeIs('verifier.dashboard') || request()->routeIs('pencari-kerja.dashboard') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+       {{ request()->routeIs('dashboard') || request()->routeIs('perusahaan.dashboard')|| request()->routeIs('verifier.dashboard') || request()->routeIs('pencari-kerja.dashboard') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
         Dashboard
     </a>
     
@@ -92,14 +92,18 @@
     @endif
 
     {{-- ===== EMPLOYER ===== --}}
-    @if(auth()->user()->isEmployer())
-        <a href="{{ route('lowongan.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('lowongan.index') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
-            Daftar Lowongan Saya
-        </a>
-        <a href="{{ route('perusahaan.lowongan.create') }}" class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 {{ request()->routeIs('perusahaan.lowongan.create') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
-            Post Lowongan Baru
-        </a>
-    @endif
+@if(auth()->user()->isEmployer())
+    <a href="{{ route('perusahaan.lowongan.index') }}" 
+       class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 
+       {{ request()->routeIs('perusahaan.lowongan.index') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+        Daftar Lowongan Saya
+    </a>
+    <a href="{{ route('perusahaan.lowongan.create') }}" 
+       class="px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 
+       {{ request()->routeIs('perusahaan.lowongan.create') ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' }}">
+        Post Lowongan Baru
+    </a>
+@endif
 
     {{-- ===== JOB SEEKER ===== --}}
     @if(auth()->user()->isJobSeeker())
@@ -245,13 +249,6 @@
                                 </div>
                             </div>
 
-                        @else
-                            <a href="{{ route('login') }}" class="text-xs font-bold text-slate-700 hover:text-indigo-600 px-3 py-2 transition">
-                                Login
-                            </a>
-                            <a href="{{ route('register') }}" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm shadow-indigo-100 hover:bg-indigo-700 transition">
-                                Register
-                            </a>
                         @endauth
                         
                         <!-- Mobile Menu Button -->
@@ -370,7 +367,7 @@
         <!-- FOOTER -->
         <footer class="mt-auto bg-white border-t border-slate-200/80 py-6 text-center text-slate-400 text-xs font-medium">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p>&copy; {{ date('Y') }} e-MatchKerja. Hak Cipta Dilindungi.</p>
+                <p>&copy; {{ date('Y') }} Anojobs. Hak Cipta Dilindungi.</p>
                 <div class="flex items-center gap-4">
                     <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">BANTUAN SOSIAL SPK SAW</span>
                 </div>

@@ -14,7 +14,7 @@
                 </div>
             </div>
             <h2 class="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang Kembali</h2>
-            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Silakan masuk ke akun e-MatchKerja Anda</p>
+            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Silakan masuk ke akun AnoJobs Anda</p>
         </div>
 
         <!-- Validation Errors -->

@@ -126,6 +126,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:employer'])->group(function () {
+    Route::get('/lowongan-perusahaan', [LowonganKerjaController::class, 'perusahaanLowongan'])
+        ->name('perusahaan.lowongan.index');
     Route::get('/lowongan-saya', [LowonganKerjaController::class, 'create'])
         ->name('perusahaan.lowongan.create');
     Route::post('/lowongan-saya', [LowonganKerjaController::class, 'store'])

@@ -115,7 +115,7 @@
     <div class="header">
         <h1>{{ $title }}</h1>
         <p>{{ $subtitle }}</p>
-        <p>e-MatchKerja - Sistem Pendukung Keputusan Penyaluran Bantuan</p>
+        <p>AnoJobs - Sistem Pendukung Keputusan Penyaluran Bantuan</p>
     </div>
 
     <div class="date">
@@ -187,7 +187,7 @@
     </table>
 
     <div class="footer">
-        <p>&copy; {{ date('Y') }} e-MatchKerja - All rights reserved</p>
+        <p>&copy; {{ date('Y') }} AnoJobs - All rights reserved</p>
     </div>
 </body>
 </html>

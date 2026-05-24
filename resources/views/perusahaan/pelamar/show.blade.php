@@ -5,13 +5,12 @@
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
     
-    <!-- Navigation Back -->
+    <!-- Navigation Back - HANYA SATU -->
     <div class="flex items-center gap-3">
         <a href="{{ route('perusahaan.dashboard') }}" class="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-slate-200/80 shadow-sm text-slate-600 hover:text-slate-900 transition">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Detail Pelamar</span>
-        <a href="{{ url()->previous() }}" class="ml-auto text-sm text-indigo-600 hover:underline">← Kembali</a>
     </div>
 
     <!-- Main Card -->
@@ -89,16 +88,6 @@
                     </span>
                     @endif
 
-                    @if($lamaran->portofolio_path)
-                    <a href="{{ route('lamaran.download', ['id' => $lamaran->id, 'type' => 'portofolio']) }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-sm font-medium transition">
-                        <i class="fa-solid fa-folder-open"></i> Download Portofolio
-                    </a>
-                    @else
-                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm">
-                        <i class="fa-solid fa-times"></i> Portofolio tidak tersedia
-                    </span>
-                    @endif
                 </div>
             </div>
 
@@ -147,13 +136,6 @@
                 </p>
             </div>
 
-            <!-- Tombol Kembali -->
-            <div class="border-t border-slate-100 pt-4">
-                <a href="{{ route('perusahaan.dashboard') }}" 
-                   class="inline-flex items-center gap-2 px-6 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium transition">
-                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
-                </a>
-            </div>
 
         </div>
     </div>

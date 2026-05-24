@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>e-MatchKerja - Platform SPK Penyaluran Bantuan & Karir</title>
+        <title>AnoJobs - Platform SPK Penyaluran Bantuan & Karir</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +36,7 @@
                                 <i class="fa-solid fa-briefcase text-white text-lg"></i>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-lg font-bold tracking-tight text-slate-900 leading-tight">e-MatchKerja</span>
+                                <span class="text-lg font-bold tracking-tight text-slate-900 leading-tight">AnoJobs</span>
                                 <span class="text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-none">SPK & Karir</span>
                             </div>
                         </a>
@@ -55,12 +55,7 @@
                                 </button>
                             </form>
                         @else
-                            <a href="{{ route('login') }}" class="text-xs font-bold text-slate-700 hover:text-indigo-600 px-3 py-2 transition">
-                                Login
-                            </a>
-                            <a href="{{ route('register') }}" class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-2 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition">
-                                Register
-                            </a>
+                            <!-- HANYA LOGO, TANPA TOMBOL LOGIN/REGISTER DI NAVBAR -->
                         @endauth
                     </div>
 
@@ -84,7 +79,7 @@
                             <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">Berbasis Data Akurat</span>
                         </h1>
                         <p class="text-base text-slate-600 leading-relaxed max-w-2xl">
-                            e-MatchKerja mengintegrasikan portal karir pencarian lowongan kerja lokal dengan Sistem Pendukung Keputusan (SPK) berbasis algoritma SAW untuk memprioritaskan penerima bantuan sosial secara objektif, adil, dan transparan.
+                            AnoJobs mengintegrasikan portal karir pencarian lowongan kerja lokal dengan Sistem Pendukung Keputusan (SPK) berbasis algoritma SAW untuk memprioritaskan penerima bantuan sosial secara objektif, adil, dan transparan.
                         </p>
 
                         <div class="flex flex-wrap gap-4 pt-2">
@@ -145,7 +140,7 @@
         <!-- Footer -->
         <footer class="bg-white border-t border-slate-200/80 py-6 text-center text-slate-400 text-xs font-medium">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p>&copy; {{ date('Y') }} e-MatchKerja. Hak Cipta Dilindungi.</p>
+                <p>&copy; {{ date('Y') }} AnoJobs. Hak Cipta Dilindungi.</p>
                 <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">BANTUAN SOSIAL SPK SAW</span>
             </div>
         </footer>

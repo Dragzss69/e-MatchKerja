@@ -215,4 +215,13 @@ public function index(Request $request)
 
         return view('perusahaan.dashboard', compact('lowongans', 'allApplicants'));
     }
+    public function perusahaanLowongan()
+{
+    $lowongans = LowonganKerja::where('perusahaan_id', Auth::id())
+                    ->withCount('lamaran')
+                    ->latest()
+                    ->paginate(10);
+
+    return view('perusahaan.lowongan.index', compact('lowongans'));
+}
 }

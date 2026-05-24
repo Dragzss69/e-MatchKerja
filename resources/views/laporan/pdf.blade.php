@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Penyaluran Bantuan - e-MatchKerja</title>
+    <title>Laporan Penyaluran Bantuan - AnoJobs</title>
     <style>
         body { 
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
@@ -60,7 +60,7 @@
 <body>
     <div class="header">
         <h1>LAPORAN REKAPITULASI PENGAJUAN BANTUAN SOSIAL</h1>
-        <p>Sistem Pendukung Keputusan Penyaluran Bantuan Sosial - e-MatchKerja</p>
+        <p>Sistem Pendukung Keputusan Penyaluran Bantuan Sosial - AnoJobs</p>
         <p>Tanggal Cetak Dokumen: {{ date('d F Y H:i:s') }}</p>
     </div>
 

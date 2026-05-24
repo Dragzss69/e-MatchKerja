@@ -141,59 +141,60 @@ class JobSeekerProfileController extends Controller
      * Update profile
      */
     public function update(Request $request)
-    {
-        if (!Auth::user()->isJobSeeker()) {
-            abort(403);
-        }
+{
+    if (!Auth::user()->isJobSeeker()) {
+        abort(403);
+    }
 
-        $profile = Auth::user()->jobSeekerProfile;
-        
-        if (!$profile) {
-            return redirect()->route('jobseeker.profile.create')
-                            ->with('error', 'Profil tidak ditemukan.');
-        }
-        
-        $request->validate([
-            'nik'                    => 'required|digits:16|unique:job_seeker_profiles,nik,' . $profile->id,
-            'nama_lengkap'           => 'required|string|max:255',
-            'tanggal_lahir'          => 'required|date|before:today',
-            'jenis_kelamin'          => 'required|in:L,P',
-            'alamat_ktp'             => 'required|string|max:500',
-            'no_hp'                  => 'required|string|max:20',
-            'pendidikan_terakhir'    => 'required|in:sd,smp,sma,d3,s1,s2,s3',
-            'status_kerja_saat_ini'  => 'required|in:menganggur,bekerja_paruh_waktu,bekerja_penuh,wirausaha',
-            'lama_menganggur'        => 'nullable|integer|min:0',
-            'pendapatan_bulanan'     => 'nullable|numeric|min:0',
-            'jumlah_tanggungan'      => 'required|integer|min:0',
-            'is_penerima_bansos_lain' => 'nullable|boolean',
-            'file_ktp'               => 'nullable|mimes:pdf|max:2048',
-            'file_kk'                => 'nullable|mimes:pdf|max:2048',
-        ]);
-        
-        $data = $request->except(['file_ktp', 'file_kk', '_token', '_method']);
-        $data['is_penerima_bansos_lain'] = $request->boolean('is_penerima_bansos_lain');
-        
-        // Jenis kelamin (nilai sudah L/P)
-        $data['jenis_kelamin'] = $request->jenis_kelamin;
-        
-        // Konversi status kerja
-        $statusKerja = $request->status_kerja_saat_ini;
-        if (in_array($statusKerja, ['bekerja_paruh_waktu', 'bekerja_penuh'])) {
-            $data['status_kerja_saat_ini'] = 'Bekerja';
-        } elseif ($statusKerja == 'menganggur') {
-            $data['status_kerja_saat_ini'] = 'Menganggur';
-        } elseif ($statusKerja == 'wirausaha') {
-            $data['status_kerja_saat_ini'] = 'Wirausaha';
-        }
-        
-        // Set lama_menganggur
-        if ($data['status_kerja_saat_ini'] == 'Bekerja' || $data['status_kerja_saat_ini'] == 'Wirausaha') {
-            $data['lama_menganggur'] = 0;
-        } else {
-            $data['lama_menganggur'] = $request->lama_menganggur ?? 0;
-        }
-        
-        // Upload file KTP
+    $profile = Auth::user()->jobSeekerProfile;
+    
+    if (!$profile) {
+        return redirect()->route('jobseeker.profile.create')
+                        ->with('error', 'Profil tidak ditemukan.');
+    }
+    
+    $request->validate([
+        'nik'                    => 'required|digits:16|unique:job_seeker_profiles,nik,' . $profile->id,
+        'nama_lengkap'           => 'required|string|max:255',
+        'tanggal_lahir'          => 'required|date|before:today',
+        'jenis_kelamin'          => 'required|in:L,P',
+        'alamat_ktp'             => 'required|string|max:500',
+        'no_hp'                  => 'required|string|max:20',
+        'pendidikan_terakhir'    => 'required|in:sd,smp,sma,d3,s1,s2,s3',
+        'status_kerja_saat_ini'  => 'required|in:menganggur,bekerja_paruh_waktu,bekerja_penuh,wirausaha',
+        'lama_menganggur'        => 'nullable|integer|min:0',
+        'pendapatan_bulanan'     => 'nullable|numeric|min:0',
+        'jumlah_tanggungan'      => 'required|integer|min:0',
+        'is_penerima_bansos_lain' => 'nullable|boolean',
+        'file_ktp'               => 'nullable|mimes:pdf|max:2048',
+        'file_kk'                => 'nullable|mimes:pdf|max:2048',
+    ]);
+    
+    $data = $request->except(['file_ktp', 'file_kk', '_token', '_method']);
+    $data['is_penerima_bansos_lain'] = $request->boolean('is_penerima_bansos_lain');
+    $data['jenis_kelamin'] = $request->jenis_kelamin;
+    
+    // Konversi status kerja
+    $statusKerja = $request->status_kerja_saat_ini;
+    if (in_array($statusKerja, ['bekerja_paruh_waktu', 'bekerja_penuh'])) {
+        $data['status_kerja_saat_ini'] = 'Bekerja';
+    } elseif ($statusKerja == 'menganggur') {
+        $data['status_kerja_saat_ini'] = 'Menganggur';
+    } elseif ($statusKerja == 'wirausaha') {
+        $data['status_kerja_saat_ini'] = 'Wirausaha';
+    }
+    
+    // Set lama_menganggur
+    if ($data['status_kerja_saat_ini'] == 'Bekerja' || $data['status_kerja_saat_ini'] == 'Wirausaha') {
+        $data['lama_menganggur'] = 0;
+    } else {
+        $data['lama_menganggur'] = $request->lama_menganggur ?? 0;
+    }
+    
+    // ========== UPLOAD FILE BERDASARKAN STATUS VERIFIKASI ==========
+    // Jika akun sudah diverifikasi, file TIDAK BISA diubah
+    if ($profile->status_verifikasi != 'Verified') {
+        // Hanya upload jika status belum verified
         if ($request->hasFile('file_ktp')) {
             if ($profile->file_ktp) {
                 Storage::disk('public')->delete($profile->file_ktp);
@@ -201,19 +202,24 @@ class JobSeekerProfileController extends Controller
             $data['file_ktp'] = $request->file('file_ktp')->store('dokumen/ktp', 'public');
         }
         
-        // Upload file KK
         if ($request->hasFile('file_kk')) {
             if ($profile->file_kk) {
                 Storage::disk('public')->delete($profile->file_kk);
             }
             $data['file_kk'] = $request->file('file_kk')->store('dokumen/kk', 'public');
         }
-        
-        $profile->update($data);
-        
-        return redirect()->route('jobseeker.profile.show')
-                         ->with('success', 'Profil berhasil diperbarui!');
+    } else {
+        // Jika sudah verified, pertahankan file lama
+        $data['file_ktp'] = $profile->file_ktp;
+        $data['file_kk'] = $profile->file_kk;
     }
+    // ==================================================================
+    
+    $profile->update($data);
+    
+    return redirect()->route('jobseeker.profile.show')
+                    ->with('success', 'Profil berhasil diperbarui!');
+}
 
     /**
      * Delete profile
