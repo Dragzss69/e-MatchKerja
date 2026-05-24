@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\LamaranKerja;
 use App\Models\LowonganKerja;
+use App\Notifications\LamaranStatusBerubah;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -15,50 +17,61 @@ class LamaranKerjaController extends Controller
      * Pencari kerja: submit lamaran
      */
      public function store(Request $request, int $lowongan_id): RedirectResponse
-    {
-        $lowongan = LowonganKerja::findOrFail($lowongan_id);
-        
-        // ========== CEK APAKAH DATA DIRI SUDAH DIVERIFIKASI ==========
-        $profile = Auth::user()->jobSeekerProfile;
-        
-        if (!$profile || $profile->status_verifikasi != 'Verified') {
-            return redirect()->back()->with('error', 'Anda belum dapat melamar. Data diri Anda harus diverifikasi terlebih dahulu oleh petugas. Silakan hubungi petugas verifikasi.');
-        }
-        // =============================================================
-
-        $request->validate([
-            'cv'         => 'required|file|mimes:pdf|max:5120',
-            'portofolio' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'catatan'    => 'nullable|string|max:500',
-        ]);
-
-        $sudahLamar = LamaranKerja::where('user_id', Auth::id())
-                        ->where('lowongan_id', $lowongan_id)
-                        ->exists();
-
-        if ($sudahLamar) {
-            return redirect()->back()->with('error', 'Anda sudah melamar lowongan ini.');
-        }
-
-        $data = [
-            'user_id'     => Auth::id(),
-            'lowongan_id' => $lowongan_id,
-            'catatan'     => $request->catatan,
-            'status'      => 'pending',
-        ];
-
-        if ($request->hasFile('cv')) {
-            $data['cv_path'] = $request->file('cv')->store('lamaran/cv', 'public');
-        }
-
-        if ($request->hasFile('portofolio')) {
-            $data['portofolio_path'] = $request->file('portofolio')->store('lamaran/portofolio', 'public');
-        }
-
-        LamaranKerja::create($data);
-
-        return redirect()->back()->with('success', 'Lamaran berhasil dikirim!');
+{
+    $lowongan = LowonganKerja::findOrFail($lowongan_id);
+    
+    // ========== CEK APAKAH DATA DIRI SUDAH DIVERIFIKASI ==========
+    $profile = Auth::user()->jobSeekerProfile;
+    
+    if (!$profile || $profile->status_verifikasi != 'Verified') {
+        return redirect()->back()->with('error', 'Anda belum dapat melamar. Data diri Anda harus diverifikasi terlebih dahulu oleh petugas. Silakan hubungi petugas verifikasi.');
     }
+    // =============================================================
+
+    $request->validate([
+        'cv'         => 'required|file|mimes:pdf|max:5120',
+        'portofolio' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+        'catatan'    => 'nullable|string|max:500',
+    ]);
+
+    $sudahLamar = LamaranKerja::where('user_id', Auth::id())
+                    ->where('lowongan_id', $lowongan_id)
+                    ->exists();
+
+    if ($sudahLamar) {
+        return redirect()->back()->with('error', 'Anda sudah melamar lowongan ini.');
+    }
+
+    $data = [
+        'user_id'     => Auth::id(),
+        'lowongan_id' => $lowongan_id,
+        'catatan'     => $request->catatan,
+        'status'      => 'pending',
+    ];
+
+    if ($request->hasFile('cv')) {
+        $data['cv_path'] = $request->file('cv')->store('lamaran/cv', 'public');
+    }
+
+    if ($request->hasFile('portofolio')) {
+        $data['portofolio_path'] = $request->file('portofolio')->store('lamaran/portofolio', 'public');
+    }
+
+    $lamaran = LamaranKerja::create($data);
+
+    // ========== KIRIM NOTIFIKASI KE PERUSAHAAN ==========
+    $perusahaan = User::find($lowongan->perusahaan_id);
+    
+    if ($perusahaan) {
+        $perusahaan->notify(new LamaranStatusBerubah(
+            $lamaran,
+            "📝 Ada lamaran baru untuk posisi \"{$lowongan->posisi}\" dari {$lamaran->user->name}. Silakan cek dan proses lamaran tersebut."
+        ));
+    }
+    // ====================================================
+
+    return redirect()->back()->with('success', 'Lamaran berhasil dikirim!');
+}
 
     /**
      * Perusahaan: lihat semua pelamar di 1 lowongan
@@ -132,21 +145,38 @@ public function pelamar(int $lowongan_id): View
      * Perusahaan: update status pelamar
      */
     public function updateStatus(Request $request, int $id): RedirectResponse
-    {
-        $lamaran = LamaranKerja::with('lowongan')->findOrFail($id);
+{
+    $lamaran = LamaranKerja::with(['lowongan', 'user'])->findOrFail($id);
 
-        if ($lamaran->lowongan->perusahaan_id !== Auth::id()) {
-            abort(403);
-        }
-
-        $request->validate([
-            'status' => 'required|in:pending,dipanggil_wawancara,diterima,ditolak',
-        ]);
-
-        $lamaran->update(['status' => $request->status]);
-
-        return redirect()->back()->with('success', 'Status lamaran berhasil diubah!');
+    if ($lamaran->lowongan->perusahaan_id !== Auth::id()) {
+        abort(403);
     }
+
+    $request->validate([
+        'status' => 'required|in:pending,dipanggil_wawancara,diterima,ditolak',
+    ]);
+
+    $oldStatus = $lamaran->status;
+    $lamaran->update(['status' => $request->status]);
+
+    // ========== KIRIM NOTIFIKASI KE PENCAKAR KERJA ==========
+    $statusMessages = [
+        'pending' => 'masih dalam proses review',
+        'dipanggil_wawancara' => 'dipanggil untuk mengikuti wawancara',
+        'diterima' => 'diterima. Selamat!',
+        'ditolak' => 'ditolak. Tetap semangat dan coba lamar lowongan lainnya.',
+    ];
+
+    $statusText = $statusMessages[$request->status] ?? 'telah diperbarui';
+
+    $lamaran->user->notify(new LamaranStatusBerubah(
+        $lamaran,
+        "Status lamaran Anda untuk posisi \"{$lamaran->lowongan->posisi}\" {$statusText}"
+    ));
+    // ========================================================
+
+    return redirect()->back()->with('success', 'Status lamaran berhasil diubah!');
+}
 
     /**
      * Pencari kerja: riwayat lamaran sendiri

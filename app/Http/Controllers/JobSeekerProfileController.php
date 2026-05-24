@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobSeekerProfile;
+use App\Notifications\VerifikasiDataDiriBerubah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -345,7 +346,13 @@ public function verifikasiDataDiri(Request $request, $id)
         'tanggal_verifikasi' => now(),
     ]);
     
-    // PERBAIKI: Ubah dari 'admin.jobseekers.pending-verification' menjadi 'verifier.jobseekers.pending-verification'
+    // ========== KIRIM NOTIFIKASI KE PENCAKAR KERJA ==========
+    $profile->user->notify(new VerifikasiDataDiriBerubah(
+        $profile,
+        '✅ Selamat! Data diri Anda telah diverifikasi. Sekarang Anda dapat mengajukan bantuan dan melamar pekerjaan.'
+    ));
+    // ========================================================
+    
     return redirect()->route('verifier.jobseekers.pending-verification')
                      ->with('success', 'Data diri pencari kerja berhasil diverifikasi.');
 }

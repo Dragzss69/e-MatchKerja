@@ -137,71 +137,124 @@
                         @auth
                             
                             <!-- Bell Notification Icon -->
-                            <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" type="button" class="relative rounded-xl p-2.5 text-slate-500 bg-slate-50 border border-slate-200/80 hover:bg-slate-100 hover:text-slate-800 transition duration-150 focus:outline-none">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                                    </svg>
-                                    @if(auth()->user()->unreadNotifications->count() > 0)
-                                        <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
-                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                                        </span>
-                                    @endif
-                                </button>
+<div class="relative" x-data="{ open: false }">
+    <button @click="open = !open" type="button" class="relative rounded-xl p-2.5 text-slate-500 bg-slate-50 border border-slate-200/80 hover:bg-slate-100 hover:text-slate-800 transition duration-150 focus:outline-none">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+        </svg>
+        @if(auth()->user()->unreadNotifications->count() > 0)
+            <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-[9px] font-bold">
+                {{ auth()->user()->unreadNotifications->count() }}
+            </span>
+        @endif
+    </button>
 
-                                <!-- Notification Dropdown -->
-                                <div x-show="open" @click.away="open = false" x-cloak
-                                     x-transition:enter="transition ease-out duration-200"
-                                     x-transition:enter-start="opacity-0 translate-y-1 scale-95"
-                                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                                     x-transition:leave="transition ease-in duration-75"
-                                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                                     x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                                     class="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl bg-white p-2 shadow-xl border border-slate-200/80 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                    
-                                    <div class="px-4 py-2.5 flex items-center justify-between border-b border-slate-100">
-                                        <span class="text-sm font-bold text-slate-900">Notifikasi Terbaru</span>
-                                        @if(auth()->user()->unreadNotifications->count() > 0)
-                                            <form action="{{ route('notifications.markAllRead') }}" method="POST" class="m-0">
-                                                @csrf
-                                                <button type="submit" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition">
-                                                    Tandai Dibaca
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
+    <!-- Notification Dropdown -->
+    <div x-show="open" @click.away="open = false" x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+         x-transition:leave="transition ease-in duration-75"
+         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+         class="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl bg-white p-2 shadow-xl border border-slate-200/80 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+        
+        <div class="px-4 py-2.5 flex items-center justify-between border-b border-slate-100">
+            <span class="text-sm font-bold text-slate-900">Notifikasi Terbaru</span>
+            @if(auth()->user()->unreadNotifications->count() > 0)
+                <form action="{{ route('notifications.markAllRead') }}" method="POST" class="m-0">
+                    @csrf
+                    <button type="submit" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition">
+                        Tandai Dibaca
+                    </button>
+                </form>
+            @endif
+        </div>
 
-                                    <div class="max-h-64 overflow-y-auto divide-y divide-slate-100">
-                                        @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notif)
-                                            <a href="{{ route('notifications.markRead', $notif->id) }}" class="flex flex-col gap-1 p-3 transition hover:bg-slate-50 {{ is_null($notif->read_at) ? 'bg-indigo-50/40' : '' }}">
-                                                <p class="text-xs text-slate-800 leading-snug">{{ $notif->data['pesan'] }}</p>
-                                                <div class="flex items-center justify-between mt-1 text-[10px] text-slate-400">
-                                                    <span>{{ $notif->created_at->diffForHumans() }}</span>
-                                                    <span class="px-2 py-0.5 rounded-full font-bold uppercase tracking-wider
-                                                        @if(($notif->data['status'] ?? '') == 'pending') bg-amber-100 text-amber-800
-                                                        @elseif(($notif->data['status'] ?? '') == 'diverifikasi') bg-sky-100 text-sky-800
-                                                        @elseif(($notif->data['status'] ?? '') == 'disetujui') bg-emerald-100 text-emerald-800
-                                                        @elseif(($notif->data['status'] ?? '') == 'ditolak') bg-rose-100 text-rose-800
-                                                        @else bg-purple-100 text-purple-800 @endif">
-                                                        {{ $notif->data['status'] ?? 'Info' }}
-                                                    </span>
-                                                </div>
-                                            </a>
-                                        @empty
-                                            <div class="py-8 text-center text-xs text-slate-400">
-                                                <i class="fa-regular fa-bell text-lg mb-2 block"></i>
-                                                Belum ada notifikasi
-                                            </div>
-                                        @endforelse
-                                    </div>
-                                    <div class="p-2 border-t border-slate-100 text-center">
-                                        <a href="{{ route('notifications.index') }}" class="block w-full py-1.5 text-center text-xs font-semibold text-slate-600 hover:text-indigo-600 transition bg-slate-50 hover:bg-indigo-50/50 rounded-lg">
-                                            Lihat Semua Notifikasi
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="max-h-64 overflow-y-auto divide-y divide-slate-100">
+            @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notif)
+                @php
+                    $notifType = class_basename($notif->type);
+                    
+                    // Ikon berdasarkan tipe notifikasi
+                    $icon = match($notifType) {
+                        'LamaranStatusBerubah' => 'fa-briefcase',
+                        'StatusPengajuanBerubah' => 'fa-file-invoice-dollar',
+                        'VerifikasiDataDiriBerubah' => 'fa-id-card',
+                        default => 'fa-bell'
+                    };
+                    
+                    // Warna background icon
+                    $iconBg = match($notifType) {
+                        'LamaranStatusBerubah' => 'bg-blue-100 text-blue-600',
+                        'StatusPengajuanBerubah' => 'bg-green-100 text-green-600',
+                        'VerifikasiDataDiriBerubah' => 'bg-purple-100 text-purple-600',
+                        default => 'bg-gray-100 text-gray-600'
+                    };
+                    
+                    // Warna badge status
+                    $statusColor = match($notif->data['status'] ?? '') {
+                        'pending' => 'bg-amber-100 text-amber-800',
+                        'diverifikasi' => 'bg-sky-100 text-sky-800',
+                        'disetujui' => 'bg-emerald-100 text-emerald-800',
+                        'diterima' => 'bg-green-100 text-green-800',
+                        'ditolak' => 'bg-rose-100 text-rose-800',
+                        'Verified' => 'bg-green-100 text-green-800',
+                        default => 'bg-purple-100 text-purple-800'
+                    };
+                    
+                    $statusText = match($notif->data['status'] ?? '') {
+                        'pending' => 'Pending',
+                        'diverifikasi' => 'Diverifikasi',
+                        'disetujui' => 'Disetujui',
+                        'diterima' => 'Diterima',
+                        'ditolak' => 'Ditolak',
+                        'Verified' => 'Terverifikasi',
+                        default => 'Info'
+                    };
+                @endphp
+                
+                <a href="{{ route('notifications.markRead', $notif->id) }}" 
+                   class="flex gap-3 p-3 transition hover:bg-slate-50 {{ is_null($notif->read_at) ? 'bg-indigo-50/40' : '' }}">
+                    <!-- Icon -->
+                    <div class="flex-shrink-0">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center {{ $iconBg }}">
+                            <i class="fa-solid {{ $icon }} text-sm"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs text-slate-800 leading-snug">{{ $notif->data['pesan'] }}</p>
+                        <div class="flex items-center justify-between mt-1.5">
+                            <span class="text-[10px] text-slate-400">{{ $notif->created_at->diffForHumans() }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider {{ $statusColor }}">
+                                {{ $statusText }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    @if(is_null($notif->read_at))
+                        <div class="w-2 h-2 rounded-full bg-indigo-500 mt-2"></div>
+                    @endif
+                </a>
+            @empty
+                <div class="py-8 text-center">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-2">
+                        <i class="fa-regular fa-bell-slash text-slate-400 text-xl"></i>
+                    </div>
+                    <p class="text-xs text-slate-400">Belum ada notifikasi</p>
+                </div>
+            @endforelse
+        </div>
+        
+        <div class="p-2 border-t border-slate-100 text-center">
+            <a href="{{ route('notifications.index') }}" class="block w-full py-1.5 text-center text-xs font-semibold text-slate-600 hover:text-indigo-600 transition bg-slate-50 hover:bg-indigo-50/50 rounded-lg">
+                Lihat Semua Notifikasi
+            </a>
+        </div>
+    </div>
+</div>
 
                             <!-- Profile Dropdown -->
                             <div class="relative" x-data="{ profileOpen: false }">
