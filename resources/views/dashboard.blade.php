@@ -134,69 +134,151 @@
     </div>
     @endif
 
-{{-- ===== VERIFIER Dashboard ===== --}}
+{{-- ==================== VERIFIER DASHBOARD ==================== --}}
 @if($user->isVerifier())
 <div class="space-y-6">
     
     <!-- Section Title -->
     <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
-        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-emerald-500"></i> Panel Verifikasi
-        </h3>
-        <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">PETUGAS LAPANGAN</span>
+        <div class="flex items-center gap-2">
+            <div class="p-1.5 rounded-lg bg-emerald-100">
+                <i class="fa-solid fa-clipboard-list text-emerald-600 text-sm"></i>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest">Panel Verifikasi</h3>
+        </div>
+        <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-200">
+            <i class="fa-solid fa-user-check mr-1 text-[9px]"></i> PETUGAS LAPANGAN
+        </span>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center justify-between">
-            <div class="space-y-1">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pengajuan Pending (Perlu Verifikasi)</span>
-                <h4 class="text-2xl font-black text-slate-900">{{ $statPending }}</h4>
+    <!-- Statistik Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Card Pending -->
+        <div class="group bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all hover:border-amber-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Pengajuan Pending</p>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">{{ $statPending }}</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Perlu diverifikasi</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center group-hover:scale-105 transition">
+                    <i class="fa-solid fa-clock-rotate-left text-amber-600 text-xl"></i>
+                </div>
             </div>
-            <div class="h-10 w-10 flex items-center justify-center rounded-xl bg-amber-50 text-amber-500 border border-amber-100"><i class="fa-solid fa-clock-rotate-left"></i></div>
-        </div>
-        
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center justify-between">
-            <div class="space-y-1">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pengajuan Telah Diverifikasi</span>
-                <h4 class="text-2xl font-black text-slate-900">{{ $statVerified }}</h4>
+            <div class="mt-3">
+                <div class="w-full bg-amber-100 rounded-full h-1.5">
+                    <div class="bg-amber-500 h-1.5 rounded-full" style="width: {{ $statPending > 0 ? min(100, ($statPending / ($statPending + $statVerified)) * 100) : 0 }}%"></div>
+                </div>
             </div>
-            <div class="h-10 w-10 flex items-center justify-center rounded-xl bg-sky-50 text-sky-500 border border-sky-100"><i class="fa-solid fa-circle-check"></i></div>
         </div>
 
-        <!-- TAMBAHKAN CARD UNTUK DATA DIRI YANG BELUM DIVERIFIKASI -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center justify-between">
-            <div class="space-y-1">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Data Diri Belum Diverifikasi</span>
-                <h4 class="text-2xl font-black text-slate-900">{{ $statUnverifiedProfile ?? 0 }}</h4>
+        <!-- Card Terverifikasi -->
+        <div class="group bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all hover:border-sky-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Pengajuan Terverifikasi</p>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">{{ $statVerified }}</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Sudah diverifikasi</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center group-hover:scale-105 transition">
+                    <i class="fa-solid fa-circle-check text-sky-600 text-xl"></i>
+                </div>
             </div>
-            <div class="h-10 w-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-500 border border-purple-100"><i class="fa-solid fa-id-card"></i></div>
+            <div class="mt-3">
+                <div class="w-full bg-sky-100 rounded-full h-1.5">
+                    <div class="bg-sky-500 h-1.5 rounded-full" style="width: {{ $statVerified > 0 ? min(100, ($statVerified / ($statPending + $statVerified)) * 100) : 0 }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Data Diri -->
+        <div class="group bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all hover:border-purple-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Data Diri Belum Diverifikasi</p>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">{{ $statUnverifiedProfile ?? 0 }}</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Perlu verifikasi dokumen</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center group-hover:scale-105 transition">
+                    <i class="fa-solid fa-id-card text-purple-600 text-xl"></i>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Quick Action Card -->
+    <!-- Quick Action Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="rounded-2xl bg-emerald-950 text-white p-5 flex flex-col justify-between shadow-sm">
-            <div class="space-y-1">
-                <span class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-400">Verifikasi Pengajuan</span>
-                <p class="text-[11px] text-emerald-200 leading-snug">Tinjau kesesuaian NIK, kondisi fisik, dan berkas KK pencari kerja yang memohon bantuan.</p>
+        <!-- Card Verifikasi Pengajuan -->
+        <div class="rounded-xl overflow-hidden bg-gradient-to-r from-emerald-600 to-emerald-700 shadow-lg hover:shadow-xl transition">
+            <div class="p-6">
+                <div class="flex items-start justify-between">
+                    <div class="space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                            <i class="fa-solid fa-file-invoice-dollar text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-white font-bold text-lg">Verifikasi Pengajuan</h3>
+                        <p class="text-emerald-100 text-xs leading-relaxed max-w-md">
+                            Tinjau kesesuaian NIK, kondisi fisik, dan berkas KK pencari kerja yang memohon bantuan.
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-white/80 text-xs">Antrean</p>
+                        <p class="text-white text-3xl font-bold">{{ $statPending }}</p>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ route('pengajuan-bantuan.index') }}" 
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-semibold transition backdrop-blur-sm">
+                        Lihat Antrean Pengajuan
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
             </div>
-            <a href="{{ route('pengajuan-bantuan.index') }}" class="mt-3 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold transition">
-                Lihat Antrean Pengajuan <i class="fa-solid fa-chevron-right text-[10px]"></i>
-            </a>
         </div>
 
-        <!-- Card Verifikasi Data Diri (Sekarang konsisten) -->
-<div class="rounded-2xl bg-indigo-950 text-white p-5 flex flex-col justify-between shadow-sm">
-    <div class="space-y-1">
-        <span class="text-[9px] font-extrabold uppercase tracking-widest text-indigo-400">Verifikasi Data Diri</span>
-        <p class="text-[11px] text-indigo-200 leading-snug">Periksa kelengkapan dan keabsahan dokumen (KTP, KK) serta data diri pencari kerja.</p>
+        <!-- Card Verifikasi Data Diri -->
+        <div class="rounded-xl overflow-hidden bg-gradient-to-r from-indigo-600 to-indigo-700 shadow-lg hover:shadow-xl transition">
+            <div class="p-6">
+                <div class="flex items-start justify-between">
+                    <div class="space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                            <i class="fa-solid fa-id-card text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-white font-bold text-lg">Verifikasi Data Diri</h3>
+                        <p class="text-indigo-100 text-xs leading-relaxed max-w-md">
+                            Periksa kelengkapan dan keabsahan dokumen (KTP, KK) serta data diri pencari kerja.
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-white/80 text-xs">Menunggu</p>
+                        <p class="text-white text-3xl font-bold">{{ $statUnverifiedProfile ?? 0 }}</p>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ route('verifier.jobseekers.pending-verification') }}" 
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-semibold transition backdrop-blur-sm">
+                        Lihat Data Diri Belum Diverifikasi
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    <a href="{{ route('verifier.jobseekers.pending-verification') }}" 
-       class="mt-3 w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold transition">
-        Lihat Data Diri Belum Diverifikasi <i class="fa-solid fa-chevron-right text-[10px]"></i>
-    </a>
-</div>
+
+    <!-- Informasi Tambahan -->
+    <div class="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <i class="fa-solid fa-circle-info text-blue-500 text-sm"></i>
+            </div>
+            <div>
+                <p class="text-xs font-medium text-slate-700">Informasi</p>
+                <p class="text-[11px] text-slate-500">
+                    Pastikan dokumen yang diunggah jelas dan sesuai sebelum melakukan verifikasi.
+                    Data diri harus diverifikasi terlebih dahulu sebelum pengajuan bantuan dapat diproses.
+                </p>
+            </div>
+        </div>
     </div>
 
 </div>

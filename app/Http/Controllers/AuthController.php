@@ -19,7 +19,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
 
@@ -31,7 +31,20 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        $user = Auth::user();
+
+        // Redirect berdasarkan role
+        if ($user->hasRole(Role::ADMIN)) {
+            return redirect()->route('admin.jobseekers.index');
+        } elseif ($user->hasRole(Role::VERIFIER)) {
+            return redirect()->route('verifier.jobseekers.pending-verification');
+        } elseif ($user->hasRole(Role::EMPLOYER)) {
+            return redirect()->route('perusahaan.dashboard');
+        } elseif ($user->hasRole(Role::JOB_SEEKER)) {
+            return redirect()->route('lowongan.index');
+        }
+
+        return redirect()->route('dashboard');
     }
 
     public function showRegistrationForm()
@@ -39,7 +52,7 @@ class AuthController extends Controller
         return view('auth.register', [
             'roles' => [
                 Role::JOB_SEEKER => 'Pencari Kerja / Masyarakat',
-                Role::EMPLOYER => 'Perusahaan / Employer',
+                Role::EMPLOYER   => 'Perusahaan / Employer',
             ],
         ]);
     }
@@ -47,23 +60,29 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', Rule::in([Role::JOB_SEEKER, Role::EMPLOYER])],
+            'role'     => ['required', Rule::in([Role::JOB_SEEKER, Role::EMPLOYER])],
         ]);
 
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'name'     => $data['name'],
+            'email'    => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
 
+        // Assign role
         $user->assignRole($data['role']);
 
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        // Redirect berdasarkan role yang dipilih saat register
+        if ($user->hasRole(Role::EMPLOYER)) {
+            return redirect()->route('perusahaan.dashboard');
+        }
+
+        return redirect()->route('lowongan.index');
     }
 
     public function logout(Request $request)

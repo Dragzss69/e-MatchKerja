@@ -4,13 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Kriteria;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     private function assignRole(User $user, string $roleName): void
     {
         $role = Role::where('name', $roleName)->first();
@@ -21,32 +20,40 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // ==================== PANGGIL SEEDER LAIN ====================
         $this->call([
             RoleSeeder::class,
             KriteriaSeeder::class,
         ]);
 
-        // Admin
+        // ==================== ADMIN ====================
         $admin = User::firstOrCreate(
             ['email' => 'admin@ematchkerja.test'],
             ['name' => 'Admin Dinas', 'password' => bcrypt('password')]
         );
         $this->assignRole($admin, 'admin');
 
-        // Petugas Verifikasi
+        // ==================== PETUGAS VERIFIKASI ====================
         $petugas = User::firstOrCreate(
             ['email' => 'petugas@ematchkerja.test'],
             ['name' => 'Petugas Verifikasi', 'password' => bcrypt('password')]
         );
-        $this->assignRole($petugas, 'verifier'); // ← diperbaiki dari 'petugas'
+        $this->assignRole($petugas, 'verifier');
 
-        // Pencari Kerja (5 orang)
+        // ==================== PERUSAHAAN ====================
+        $perusahaan = User::firstOrCreate(
+            ['email' => 'hrd@majujaya.test'],
+            ['name' => 'PT Maju Jaya Abadi', 'password' => bcrypt('password')]
+        );
+        $this->assignRole($perusahaan, 'employer');
+
+        // ==================== PENCAKER KERJA (5 orang default) ====================
         for ($i = 1; $i <= 5; $i++) {
             $user = User::firstOrCreate(
                 ['email' => "pencari{$i}@ematchkerja.test"],
                 ['name' => "Pencari Kerja {$i}", 'password' => bcrypt('password')]
             );
-            $this->assignRole($user, 'job_seeker'); // ← diperbaiki dari 'pencari_kerja'
+            $this->assignRole($user, 'job_seeker');
 
             // Berikan profile default agar bisa masuk ke data admin/petugas
             \App\Models\JobSeekerProfile::firstOrCreate(
@@ -68,12 +75,17 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // Jalankan Profile Seeder Tambahan (Andi, Siti, Budi, Dewi)
+        // ==================== PENCAKER KERJA TAMBAHAN (Andi, Siti, Budi, Dewi) ====================
         $this->call(JobSeekerProfileSeeder::class);
 
-        // Jalankan Seeder Pengajuan Bantuan
+        // ==================== PENGAJUAN BANTUAN ====================
         $this->call(PengajuanBantuanSeeder::class);
 
         $this->command->info('✅ Database seeding selesai!');
+        $this->command->info('Akun yang tersedia:');
+        $this->command->info('Admin      : admin@ematchkerja.test / password');
+        $this->command->info('Petugas    : petugas@ematchkerja.test / password');
+        $this->command->info('Perusahaan : hrd@majujaya.test / password');
+        $this->command->info('Pencari 1-5: pencari1@ematchkerja.test / password (dst)');
     }
 }

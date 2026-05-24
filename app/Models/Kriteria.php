@@ -2,9 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Kriteria extends Model
 {
-    //
+    use HasFactory;
+
+    protected $table = 'kriterias';
+
+    protected $fillable = [
+        'nama_kriteria',
+        'kode_kriteria',
+        'jenis',
+        'bobot',
+        'target_kolom',
+    ];
+
+    protected $casts = [
+        'bobot' => 'decimal:2',
+    ];
 }

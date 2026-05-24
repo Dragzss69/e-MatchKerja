@@ -22,16 +22,27 @@ class LowonganKerja extends Model
         'skill_dibutuhkan',
         'kuota',
         'deadline',
-        'status'
+        'status',
     ];
 
     protected $casts = [
         'skill_dibutuhkan' => 'array',
-        'deadline' => 'date',
+        'deadline'         => 'date',
     ];
 
+    /**
+     * Relasi ke perusahaan (User)
+     */
     public function perusahaan()
     {
         return $this->belongsTo(User::class, 'perusahaan_id');
+    }
+
+    /**
+     * Relasi ke lamaran - wajib ada agar withCount('lamaran') bekerja
+     */
+    public function lamaran()
+    {
+        return $this->hasMany(LamaranKerja::class, 'lowongan_id');
     }
 }

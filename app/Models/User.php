@@ -14,6 +14,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @method bool hasRole(string $role)
+ * @method self assignRole(string|Role $role)
+ * @method self removeRole(string|Role $role)
+ */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -103,5 +108,17 @@ class User extends Authenticatable
     public function isJobSeeker(): bool
     {
         return $this->hasRole(Role::JOB_SEEKER);
+    }
+
+    // Relasi: perusahaan punya banyak lowongan
+    public function lowongans(): HasMany
+    {
+        return $this->hasMany(LowonganKerja::class, 'perusahaan_id');
+    }
+
+    // Relasi: pencari kerja punya banyak lamaran
+    public function lamarans(): HasMany
+    {
+        return $this->hasMany(LamaranKerja::class, 'user_id');
     }
 }

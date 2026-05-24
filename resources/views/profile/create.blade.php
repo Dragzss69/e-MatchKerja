@@ -50,10 +50,10 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1">Jenis Kelamin <span class="text-rose-500">*</span></label>
                         <select name="jenis_kelamin" class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm" required>
-                            <option value="">Pilih</option>
-                            <option value="laki-laki" {{ old('jenis_kelamin', $profile->jenis_kelamin ?? '') == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                            <option value="perempuan" {{ old('jenis_kelamin', $profile->jenis_kelamin ?? '') == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
-                        </select>
+    <option value="">Pilih</option>
+    <option value="L" {{ old('jenis_kelamin', $profile->jenis_kelamin ?? '') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+    <option value="P" {{ old('jenis_kelamin', $profile->jenis_kelamin ?? '') == 'P' ? 'selected' : '' }}>Perempuan</option>
+</select>
                         @error('jenis_kelamin') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>

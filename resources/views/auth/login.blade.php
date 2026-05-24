@@ -8,6 +8,11 @@
         
         <!-- Header -->
         <div class="text-center space-y-2">
+            <div class="flex justify-center mb-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-briefcase text-white text-xl"></i>
+                </div>
+            </div>
             <h2 class="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang Kembali</h2>
             <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Silakan masuk ke akun e-MatchKerja Anda</p>
         </div>
@@ -57,12 +62,15 @@
                 </div>
             </div>
 
-            <!-- Remember Me -->
+            <!-- Remember Me & Forgot Password -->
             <div class="flex items-center justify-between text-xs pt-1">
                 <label class="flex items-center gap-2 cursor-pointer font-semibold text-slate-600">
-                    <input type="checkbox" name="remember" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4">
-                    Remember me
+                    <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }} class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4">
+                    <span>Ingat Saya</span>
                 </label>
+                <a href="{{ route('password.request') }}" class="text-indigo-600 hover:text-indigo-800 font-semibold transition">
+                    Lupa Password?
+                </a>
             </div>
 
             <!-- Submit Button -->
@@ -73,9 +81,11 @@
 
         <!-- Register Link -->
         <div class="text-center pt-4 border-t border-slate-100">
-            <p class="text-xs text-slate-500 font-medium">
-                Belum memiliki akun? 
-                <a href="{{ route('register') }}" class="font-bold text-indigo-600 hover:text-indigo-800 transition">Daftar Akun Baru</a>
+            <p class="text-xs text-slate-600">
+                Belum punya akun?
+                <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800 font-bold transition ml-1">
+                    Daftar Sekarang →
+                </a>
             </p>
         </div>
 
