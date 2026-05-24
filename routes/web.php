@@ -49,23 +49,45 @@ Route::middleware('auth')->group(function () {
 
         return redirect()->route('lowongan.index');
     })->name('dashboard');
-    // ==================== VERIFIER DASHBOARD ====================
-// ==================== VERIFIER DASHBOARD ====================
-Route::middleware(['auth', 'role:verifier'])->group(function () {
-    Route::get('/verifier/dashboard', function () {
-        $statUnverifiedProfile = \App\Models\JobSeekerProfile::where('status_verifikasi', 'Unverified')->count();
-        $statPending = \App\Models\PengajuanBantuan::where('status', 'pending')->count();
-        $statVerified = \App\Models\PengajuanBantuan::where('status', 'diverifikasi')->count();
-        
-        return view('dashboard', compact('statUnverifiedProfile', 'statPending', 'statVerified'));
-    })->name('verifier.dashboard');
-});
-// ==================== JOB SEEKER DASHBOARD ====================
-Route::middleware(['auth', 'role:job_seeker'])->group(function () {
-    Route::get('/pencari-kerja/dashboard', function () {
-        return view('dashboard'); // Pakai dashboard utama yang sudah lengkap
-    })->name('pencari-kerja.dashboard');
-});
+    // ==================== VERIFIER MODULES ====================
+    Route::middleware(['auth', 'role:verifier'])->group(function () {
+        Route::get('/verifier/dashboard', function () {
+            $statUnverifiedProfile = \App\Models\JobSeekerProfile::where('status_verifikasi', 'Unverified')->count();
+            $statPending = \App\Models\PengajuanBantuan::where('status', 'pending')->count();
+            $statVerified = \App\Models\PengajuanBantuan::where('status', 'diverifikasi')->count();
+            
+            return view('dashboard', compact('statUnverifiedProfile', 'statPending', 'statVerified'));
+        })->name('verifier.dashboard');
+
+        Route::get('verifier/jobseekers/pending-verification', [JobSeekerProfileController::class, 'pendingVerification'])
+            ->name('verifier.jobseekers.pending-verification');
+        Route::post('verifier/jobseekers/{id}/verifikasi-data-diri', [JobSeekerProfileController::class, 'verifikasiDataDiri'])
+            ->name('verifier.jobseekers.verifikasi-data-diri');
+    });
+
+    // ==================== JOB SEEKER MODULES ====================
+    Route::middleware(['auth', 'role:job_seeker'])->group(function () {
+        Route::get('/pencari-kerja/dashboard', function () {
+            return view('dashboard'); // Pakai dashboard utama yang sudah lengkap
+        })->name('pencari-kerja.dashboard');
+
+        Route::get('/profil-saya', [JobSeekerProfileController::class, 'show'])
+            ->name('jobseeker.profile.show');
+        Route::get('/profil-saya/create', [JobSeekerProfileController::class, 'create'])
+            ->name('jobseeker.profile.create');
+        Route::post('/profil-saya', [JobSeekerProfileController::class, 'store'])
+            ->name('jobseeker.profile.store');
+        Route::get('/profil-saya/edit', [JobSeekerProfileController::class, 'edit'])
+            ->name('jobseeker.profile.edit');
+        Route::put('/profil-saya', [JobSeekerProfileController::class, 'update'])
+            ->name('jobseeker.profile.update');
+        Route::delete('/profil-saya', [JobSeekerProfileController::class, 'destroy'])
+            ->name('jobseeker.profile.destroy');
+
+        Route::get('/lamaran-saya/{id}', [LamaranKerjaController::class, 'showForJobSeeker'])
+            ->name('lamaran.jobseeker.show');
+    });
+
     // Dashboard Perusahaan
     Route::get('/perusahaan/dashboard', [LowonganKerjaController::class, 'perusahaanDashboard'])
         ->name('perusahaan.dashboard');
@@ -91,34 +113,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('admin.lowongan.index');
 });
 
-// ==================== VERIFIER DATA MANAGEMENT ====================
-Route::middleware(['auth', 'role:verifier'])->group(function () {
-    // Verifikasi Data Diri Pencari Kerja
-    Route::get('verifier/jobseekers/pending-verification', [JobSeekerProfileController::class, 'pendingVerification'])
-        ->name('verifier.jobseekers.pending-verification');
-    Route::post('verifier/jobseekers/{id}/verifikasi-data-diri', [JobSeekerProfileController::class, 'verifikasiDataDiri'])
-        ->name('verifier.jobseekers.verifikasi-data-diri');
-});
-
-// ==================== JOB SEEKER PROFILE (Pencari Kerja) ====================
-Route::middleware(['auth', 'role:job_seeker'])->group(function () {
-    Route::get('/profil-saya', [JobSeekerProfileController::class, 'show'])
-        ->name('jobseeker.profile.show');
-    Route::get('/profil-saya/create', [JobSeekerProfileController::class, 'create'])
-        ->name('jobseeker.profile.create');
-    Route::post('/profil-saya', [JobSeekerProfileController::class, 'store'])
-        ->name('jobseeker.profile.store');
-    Route::get('/profil-saya/edit', [JobSeekerProfileController::class, 'edit'])
-        ->name('jobseeker.profile.edit');
-    Route::put('/profil-saya', [JobSeekerProfileController::class, 'update'])
-        ->name('jobseeker.profile.update');
-    Route::delete('/profil-saya', [JobSeekerProfileController::class, 'destroy'])
-        ->name('jobseeker.profile.destroy');
-});
-Route::middleware(['auth', 'role:job_seeker'])->group(function () {
-    Route::get('/lamaran-saya/{id}', [LamaranKerjaController::class, 'showForJobSeeker'])
-        ->name('lamaran.jobseeker.show');
-});
 
 // ==================== LOWONGAN KERJA ====================
 Route::middleware(['auth'])->group(function () {

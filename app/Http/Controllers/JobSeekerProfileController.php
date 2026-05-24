@@ -357,12 +357,6 @@ public function verifikasiDataDiri(Request $request, $id)
                      ->with('success', 'Data diri pencari kerja berhasil diverifikasi.');
 }
 
-public static function getDashboardStats()
-{
-    $statUnverifiedProfile = JobSeekerProfile::where('status_verifikasi', 'Unverified')->count();
-    return $statUnverifiedProfile;
-}
-
 public function exportStatistikPDF(Request $request)
 {
     // Hanya admin yang bisa akses

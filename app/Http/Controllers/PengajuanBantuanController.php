@@ -99,24 +99,7 @@ class PengajuanBantuanController extends Controller
 
     
 }
-    public function verifikasiDataDiri(Request $request, $id)
-    {
-        // Hanya verifier yang bisa verifikasi data diri
-        if (!Auth::user()->isVerifier()) {
-            abort(403, 'Hanya Petugas Verifikasi yang dapat memverifikasi data diri.');
-        }
-        
-        $profile = JobSeekerProfile::findOrFail($id);
-        
-        $profile->update([
-            'status_verifikasi' => 'Verified',
-            'verified_by' => Auth::id(),
-            'tanggal_verifikasi' => now(),
-        ]);
-        
-        return redirect()->route('admin.jobseekers.index')
-                        ->with('success', 'Data diri pencari kerja berhasil diverifikasi.');
-    }
+
 
     public function approve(Request $request, PengajuanBantuan $pengajuan)
     {
