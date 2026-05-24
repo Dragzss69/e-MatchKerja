@@ -61,6 +61,7 @@ class JobSeekerProfileController extends Controller
         $data = $request->except(['file_ktp', 'file_kk', '_token']);
         $data['user_id'] = Auth::id();
         $data['is_penerima_bansos_lain'] = $request->boolean('is_penerima_bansos_lain');
+        $data['pendapatan_bulanan'] = $request->pendapatan_bulanan ?? 0;
         
         // Konversi jenis_kelamin (nilai sudah L/P)
         $data['jenis_kelamin'] = $request->jenis_kelamin;
@@ -174,6 +175,7 @@ class JobSeekerProfileController extends Controller
     $data = $request->except(['file_ktp', 'file_kk', '_token', '_method']);
     $data['is_penerima_bansos_lain'] = $request->boolean('is_penerima_bansos_lain');
     $data['jenis_kelamin'] = $request->jenis_kelamin;
+    $data['pendapatan_bulanan'] = $request->pendapatan_bulanan ?? 0;
     
     // Konversi status kerja
     $statusKerja = $request->status_kerja_saat_ini;
