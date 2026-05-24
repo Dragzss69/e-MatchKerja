@@ -190,4 +190,16 @@ public function riwayat(): View
 
     return view('lamaran.riwayat', compact('lamarans'));
 }
+
+public function showForJobSeeker(int $id): View
+{
+    $lamaran = LamaranKerja::with(['user', 'lowongan.perusahaan'])->findOrFail($id);
+    
+    // Pastikan hanya pemilik lamaran yang bisa akses
+    if ($lamaran->user_id !== Auth::id()) {
+        abort(403, 'Anda tidak memiliki akses ke lamaran ini.');
+    }
+    
+    return view('lamaran.detail', compact('lamaran'));
+}
 }

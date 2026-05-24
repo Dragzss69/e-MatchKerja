@@ -97,6 +97,16 @@
                     </div>
                     @endif
                 </div>
+
+                <!-- ========== TOMBOL LIHAT DETAIL ========== -->
+                <div class="mt-4 pt-3 border-t border-slate-100">
+                    <a href="{{ route('lamaran.jobseeker.show', $lamaran->id) }}" 
+                       class="inline-flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition">
+                        <i class="fa-solid fa-eye"></i> Lihat Detail
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </div>
+                <!-- ====================================== -->
             </div>
         </div>
         @empty

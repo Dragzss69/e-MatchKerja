@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\JobSeekerProfileController;
+use App\Http\Controllers\JobSeekerProfileControlleR;
 use App\Http\Controllers\LamaranKerjaController;
 use App\Http\Controllers\LaporanBantuanController;
 use App\Http\Controllers\LowonganKerjaController;
@@ -114,6 +114,10 @@ Route::middleware(['auth', 'role:job_seeker'])->group(function () {
         ->name('jobseeker.profile.update');
     Route::delete('/profil-saya', [JobSeekerProfileController::class, 'destroy'])
         ->name('jobseeker.profile.destroy');
+});
+Route::middleware(['auth', 'role:job_seeker'])->group(function () {
+    Route::get('/lamaran-saya/{id}', [LamaranKerjaController::class, 'showForJobSeeker'])
+        ->name('lamaran.jobseeker.show');
 });
 
 // ==================== LOWONGAN KERJA ====================
