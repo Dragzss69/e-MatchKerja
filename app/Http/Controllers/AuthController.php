@@ -35,7 +35,7 @@ class AuthController extends Controller
 
         // Redirect berdasarkan role
         if ($user->hasRole(Role::ADMIN)) {
-            return redirect()->route('admin.jobseekers.index');
+            return redirect()->route('dashboard');
         } elseif ($user->hasRole(Role::VERIFIER)) {
             return redirect()->route('verifier.jobseekers.pending-verification');
         } elseif ($user->hasRole(Role::EMPLOYER)) {
@@ -75,14 +75,7 @@ class AuthController extends Controller
         // Assign role
         $user->assignRole($data['role']);
 
-        Auth::login($user);
-
-        // Redirect berdasarkan role yang dipilih saat register
-        if ($user->hasRole(Role::EMPLOYER)) {
-            return redirect()->route('perusahaan.dashboard');
-        }
-
-        return redirect()->route('lowongan.index');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login menggunakan akun Anda.');
     }
 
     public function logout(Request $request)
